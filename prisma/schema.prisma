@@ -1,0 +1,210 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum SeriesStatus {
+  ONGOING
+  COMPLETED
+  HIATUS
+}
+
+enum UnlockType {
+  FREE
+  AD
+  PREMIUM
+}
+
+model User {
+  id       String @id @default(cuid())
+  username String @unique
+  email    String @unique
+  password String
+
+  avatar String?
+
+  role UserRole @default(USER)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bookmarks Bookmark[]
+  history   ReadingHistory[]
+  comments  Comment[]
+  ratings   Rating[]
+}
+
+model Genre {
+  id   String @id @default(cuid())
+  name String @unique
+  slug String @unique
+
+  series SeriesGenre[]
+}
+
+model Series {
+  id String @id @default(cuid())
+
+  title String
+  slug  String @unique
+
+  description String @db.Text
+
+  coverImage  String
+  bannerImage String?
+
+  author String?
+  artist String?
+
+  status SeriesStatus @default(ONGOING)
+
+  views Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  chapters Chapter[]
+  genres   SeriesGenre[]
+
+  bookmarks Bookmark[]
+  ratings   Rating[]
+}
+
+model SeriesGenre {
+  seriesId String
+  genreId  String
+
+  series Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  genre  Genre  @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@id([seriesId, genreId])
+}
+
+model Chapter {
+  id String @id @default(cuid())
+
+  seriesId String
+
+  chapterNumber Decimal @db.Decimal(5, 2)
+
+  title String?
+
+  slug String
+
+  views Int @default(0)
+
+  unlockType UnlockType @default(FREE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  series Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+
+  pages            ChapterPage[]
+  comments         Comment[]
+  readingHistories ReadingHistory[]
+
+  @@unique([seriesId, chapterNumber])
+}
+
+model ChapterPage {
+  id String @id @default(cuid())
+
+  chapterId String
+
+  pageNumber Int
+
+  imageUrl String
+
+  chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  @@unique([chapterId, pageNumber])
+}
+
+model Bookmark {
+  id String @id @default(cuid())
+
+  userId   String
+  seriesId String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  series Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, seriesId])
+}
+
+model ReadingHistory {
+  id String @id @default(cuid())
+
+  userId    String
+  chapterId String
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  updatedAt DateTime @updatedAt
+}
+
+model Rating {
+  id String @id @default(cuid())
+
+  userId   String
+  seriesId String
+
+  rating Int
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  series Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, seriesId])
+}
+
+model Comment {
+  id String @id @default(cuid())
+
+  content String @db.Text
+
+  userId    String
+  chapterId String
+
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+}
+
+model Subscription {
+  id String @id @default(cuid())
+
+  userId String
+
+  plan String
+
+  startsAt  DateTime
+  expiresAt DateTime
+
+  createdAt DateTime @default(now())
+}
+
+model ChapterUnlock {
+  id String @id @default(cuid())
+
+  userId    String
+  chapterId String
+
+  createdAt DateTime  @default(now())
+  expiresAt DateTime?
+
+  @@unique([userId, chapterId])
+}

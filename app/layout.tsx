@@ -9,7 +9,10 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Toon Nest",
-  description: "Toon Nest | Welcome Home",
+  description: "Read your favorite webtoons",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({
@@ -19,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} antialiased`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="">{children}</body>
     </html>
   );
 }
