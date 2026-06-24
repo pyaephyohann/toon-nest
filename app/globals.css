@@ -1,9 +1,13 @@
 @import "tailwindcss";
 
-* {
+/* =========================
+   Base Reset
+========================= */
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 html {
@@ -11,11 +15,15 @@ html {
 }
 
 body {
-  background: hsl(var(--background));
-  color: hsl(var(--foreground));
-  font-family: var(--font-sans);
   min-height: 100vh;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans, Arial, Helvetica, sans-serif);
 }
+
+/* =========================
+   Typography
+========================= */
 
 h1 {
   font-size: 2.25rem;
@@ -37,14 +45,18 @@ p {
   line-height: 1.7;
 }
 
+/* =========================
+   Theme Variables
+========================= */
+
 :root {
-  /* Base */
-  --background: #ffffff;
-  --foreground: #0f172a;
+  /* Main */
+  --background: #09090b;
+  --foreground: #fafafa;
 
   /* Cards */
-  --card: #ffffff;
-  --card-foreground: #0f172a;
+  --card: #18181b;
+  --card-foreground: #fafafa;
 
   /* Brand */
   --primary: #8b5cf6;
@@ -52,30 +64,29 @@ p {
   --primary-foreground: #ffffff;
 
   /* Secondary */
-  --secondary: #f1f5f9;
-  --secondary-foreground: #334155;
+  --secondary: #27272a;
+  --secondary-foreground: #e4e4e7;
+
+  /* Muted */
+  --muted: #27272a;
+  --muted-foreground: #a1a1aa;
 
   /* Accent */
   --accent: #ec4899;
   --accent-foreground: #ffffff;
 
-  /* Muted */
-  --muted: #f8fafc;
-  --muted-foreground: #64748b;
-
   /* Borders */
-  --border: #e2e8f0;
-  --input: #e2e8f0;
+  --border: #27272a;
+  --input: #27272a;
   --ring: #8b5cf6;
 
-  /* States */
+  /* Status */
   --success: #22c55e;
   --warning: #f59e0b;
   --error: #ef4444;
   --info: #3b82f6;
 
-  /* Genre Colors */
-
+  /* Genres */
   --genre-action: #ef4444;
   --genre-fantasy: #8b5cf6;
   --genre-romance: #ec4899;
@@ -84,37 +95,13 @@ p {
   --genre-drama: #6366f1;
   --genre-adventure: #10b981;
   --genre-horror: #7f1d1d;
+
+  --radius: 1rem;
 }
 
-.dark {
-  --background: #09090b;
-  --foreground: #f8fafc;
-
-  --card: #18181b;
-  --card-foreground: #f8fafc;
-
-  --primary: #a78bfa;
-  --primary-hover: #8b5cf6;
-  --primary-foreground: #ffffff;
-
-  --secondary: #27272a;
-  --secondary-foreground: #e4e4e7;
-
-  --accent: #f472b6;
-  --accent-foreground: #ffffff;
-
-  --muted: #27272a;
-  --muted-foreground: #a1a1aa;
-
-  --border: #27272a;
-  --input: #27272a;
-  --ring: #a78bfa;
-
-  --success: #22c55e;
-  --warning: #f59e0b;
-  --error: #ef4444;
-  --info: #60a5fa;
-}
+/* =========================
+   Tailwind v4 Theme Mapping
+========================= */
 
 @theme {
   --color-background: var(--background);
@@ -130,11 +117,11 @@ p {
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
 
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
 
   --color-border: var(--border);
   --color-input: var(--input);
@@ -144,10 +131,42 @@ p {
   --color-warning: var(--warning);
   --color-error: var(--error);
   --color-info: var(--info);
+
+  --radius-lg: var(--radius);
 }
 
-body {
+/* =========================
+   Utilities
+========================= */
+
+@layer utilities {
+  .container-width {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+}
+
+/* =========================
+   Scrollbar
+========================= */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
   background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 9999px;
+}
+
+/* =========================
+   Text Selection
+========================= */
+
+::selection {
+  background: var(--primary);
+  color: white;
 }
