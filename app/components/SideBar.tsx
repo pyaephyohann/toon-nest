@@ -25,29 +25,41 @@ const libraryItems = [
   { label: "History", href: "/history", icon: Clock3 },
 ];
 
-function NavLink({
-  href,
-  icon: Icon,
-  label,
-}: {
+interface NavLinkProps {
   href: string;
   icon: React.ElementType;
   label: string;
-}) {
+}
+
+function NavLink({ href, icon: Icon, label }: NavLinkProps) {
   const pathname = usePathname();
-  const isActive = pathname === href;
+
+  const isActive = href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
     <Link
       href={href}
-      className={`flex items-center gap-3 rounded-xl px-4 py-3 text-md font-bold transition-colors duration-150 ${
-        isActive
-          ? "bg-secondary text-foreground"
-          : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+      className={`group flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200 ${
+        isActive ? "bg-primary/15 shadow-sm" : "hover:bg-secondary"
       }`}
     >
-      <Icon className={`size-5 ${isActive ? "text-primary" : ""}`} />
-      {label}
+      <Icon
+        className={`size-5 transition-colors ${
+          isActive
+            ? "text-primary"
+            : "text-muted-foreground group-hover:text-foreground"
+        }`}
+      />
+
+      <span
+        className={`text-sm font-semibold transition-colors ${
+          isActive
+            ? "text-primary"
+            : "text-muted-foreground group-hover:text-foreground"
+        }`}
+      >
+        {label}
+      </span>
     </Link>
   );
 }
@@ -57,7 +69,7 @@ export default function Sidebar() {
     <aside className="flex w-64 flex-col border-r border-border bg-card">
       {/* Nav */}
       <nav className="flex-1 px-4 py-6">
-        <ul>
+        <ul className="space-y-1">
           {navItems.map((item) => (
             <li key={item.label}>
               <NavLink {...item} />
@@ -67,7 +79,7 @@ export default function Sidebar() {
 
         <div className="my-3 border-t border-border" />
 
-        <ul>
+        <ul className="space-y-1">
           {libraryItems.map((item) => (
             <li key={item.label}>
               <NavLink {...item} />

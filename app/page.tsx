@@ -1,20 +1,12 @@
-import Navbar from "./components/NavBar";
-import Sidebar from "./components/SideBar";
+import React from "react";
+import Home from "./(features)/(home)/page";
 
-export default function MainLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+const App = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-
-      <div className="flex">
-        <Sidebar />
-
-        <main className="flex-1 p-6">{children}</main>
-      </div>
+    <div>
+      <Home />
     </div>
   );
-}
+};
+
+export default App;

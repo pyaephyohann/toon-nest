@@ -162,6 +162,15 @@ p {
   border-radius: 9999px;
 }
 
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
 /* =========================
    Text Selection
 ========================= */
