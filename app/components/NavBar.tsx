@@ -56,14 +56,17 @@ export default function Navbar() {
         {/* Left */}
         <div className="flex items-center gap-20">
           {/* Logo */}
-          <div className="flex h-16 items-center gap-2 border-b border-border">
+          <Link
+            href="/"
+            className="flex h-16 items-center gap-2 border-b border-border"
+          >
             <Image
               alt="ToonVerse"
               width={200}
               height={200}
               src="/website-logo.png"
             />
-          </div>
+          </Link>
 
           {/* Nav Links */}
           <nav>
