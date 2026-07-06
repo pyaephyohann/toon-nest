@@ -29,7 +29,7 @@ export default function UpdateCard({ manga }: Props) {
       </div>
 
       {/* Title */}
-      <div className="ml-5s flex-1">
+      <div className="ml-5 flex-1">
         <div className="flex items-center gap-2">
           <h3 className="text-xl font-semibold">{manga.title}</h3>
 
