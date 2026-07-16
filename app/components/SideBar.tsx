@@ -66,7 +66,7 @@ function NavLink({ href, icon: Icon, label }: NavLinkProps) {
 
 export default function Sidebar() {
   return (
-    <aside className="flex w-64 flex-col border-r border-border bg-card">
+    <aside className="shrink-0 no-scrollbar overflow-y-auto sticky left-0 flex w-64 flex-col border-r border-border bg-card">
       {/* Nav */}
       <nav className="flex-1 px-4 py-6">
         <ul className="space-y-1">
