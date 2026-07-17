@@ -49,6 +49,10 @@ p {
    Theme Variables
 ========================= */
 
+/* =========================
+   Theme Variables
+========================= */
+
 :root {
   /* Main */
   --background: #09090b;
@@ -86,7 +90,34 @@ p {
   --error: #ef4444;
   --info: #3b82f6;
 
-  /* Genres */
+  /* ===================================
+      Page Accent Colors
+  =================================== */
+
+  /* Popular */
+  --popular: #f97316;
+  --popular-hover: #ea580c;
+  --popular-soft: rgb(249 115 22 / 0.15);
+
+  /* Trending */
+  --trending: #f43f5e;
+  --trending-hover: #e11d48;
+  --trending-soft: rgb(244 63 94 / 0.15);
+
+  /* Completed */
+  --completed: #10b981;
+  --completed-hover: #059669;
+  --completed-soft: rgb(16 185 129 / 0.15);
+
+  /* Updates */
+  --updates: #3b82f6;
+  --updates-hover: #2563eb;
+  --updates-soft: rgb(59 130 246 / 0.15);
+
+  /* ===================================
+      Genre Colors
+  =================================== */
+
   --genre-action: #ef4444;
   --genre-fantasy: #8b5cf6;
   --genre-romance: #ec4899;
@@ -131,6 +162,24 @@ p {
   --color-warning: var(--warning);
   --color-error: var(--error);
   --color-info: var(--info);
+
+  /* Page Colors */
+
+  --color-popular: var(--popular);
+  --color-popular-hover: var(--popular-hover);
+  --color-popular-soft: var(--popular-soft);
+
+  --color-trending: var(--trending);
+  --color-trending-hover: var(--trending-hover);
+  --color-trending-soft: var(--trending-soft);
+
+  --color-completed: var(--completed);
+  --color-completed-hover: var(--completed-hover);
+  --color-completed-soft: var(--completed-soft);
+
+  --color-updates: var(--updates);
+  --color-updates-hover: var(--updates-hover);
+  --color-updates-soft: var(--updates-soft);
 
   --radius-lg: var(--radius);
 }
