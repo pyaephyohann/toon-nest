@@ -98,7 +98,7 @@ export default function CompletedCard({ manga }: Props) {
       </div>
 
       {/* Stats */}
-      <div className="flex flex-col items-end gap-2">
+      <div className="flex flex-col items-center gap-2">
         <div className="flex items-center gap-1.5 rounded-full bg-yellow-400/10 px-3 py-1.5">
           <Star size={16} className="fill-yellow-400 text-yellow-400" />
           <span className="font-semibold text-yellow-400">{manga.rating}</span>
@@ -118,7 +118,7 @@ export default function CompletedCard({ manga }: Props) {
       {/* Read Button */}
       <Link
         href={`/series/${manga.slug}`}
-        className="group/btn relative overflow-hidden rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-6 py-3 font-medium text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-emerald-500/30"
+        className="group/btn relative overflow-hidden rounded-xl bg-primary px-6 py-3 font-medium text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-emerald-500/30"
       >
         <span className="relative z-10 flex items-center gap-2">
           Read Now
