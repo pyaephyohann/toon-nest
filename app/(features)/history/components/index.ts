@@ -1,7 +1,6 @@
 export { default as HistoryHeader } from "./HistoryHeader";
 export { default as FilterBar } from "./FilterBar";
 export { default as HistoryTimeline } from "./HistoryTimeline";
-export { default as HistoryCard } from "./HistoryCard";
 
 export { default as ReadingStats } from "./ReadingStats";
 export { default as RecentlyFinished } from "./RecentlyFinished";

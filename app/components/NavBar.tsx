@@ -124,10 +124,12 @@ export default function Navbar() {
             </div>
           </div>
 
-          <button className="cursor-pointer rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-white flex justify-between items-center gap-2">
-            <Crown color="#FFDF00" absoluteStrokeWidth />
-            Get Premium
-          </button>
+          <Link href="/premium">
+            <button className="cursor-pointer rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-white flex justify-between items-center gap-2">
+              <Crown color="#FFDF00" absoluteStrokeWidth />
+              Get Premium
+            </button>
+          </Link>
 
           <button className="cursor-pointer rounded-xl border border-border p-2">
             <Bell className="size-5" />
