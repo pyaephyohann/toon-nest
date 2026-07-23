@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 export default function PlanToggle() {
   const [active, setActive] = useState("Yearly");
@@ -15,21 +16,40 @@ export default function PlanToggle() {
         </p>
       </div>
 
-      <div className="flex rounded-2xl border border-border bg-card p-1">
+      <div className="relative flex rounded-2xl border border-border bg-card p-1">
+        {/* Animated Slider */}
+        <motion.div
+          className="absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-xl bg-primary shadow-lg shadow-primary/30"
+          animate={{
+            x: active === "Monthly" ? 0 : "100%",
+          }}
+          transition={{
+            type: "spring",
+            stiffness: 350,
+            damping: 28,
+          }}
+        />
+
         {["Monthly", "Yearly"].map((item) => (
           <button
             key={item}
             onClick={() => setActive(item)}
-            className={`rounded-xl px-6 py-2 text-sm font-medium transition ${
+            className={`relative z-10 cursor-pointer flex w-32 items-center justify-center rounded-xl px-6 py-2 text-sm font-semibold transition-colors duration-300 ${
               active === item
-                ? "bg-primary text-white shadow-lg shadow-primary/30"
-                : "hover:text-primary"
+                ? "text-white"
+                : "text-muted-foreground hover:text-primary"
             }`}
           >
             {item}
 
             {item === "Yearly" && (
-              <span className="ml-2 rounded-full bg-pink-500 px-2 py-0.5 text-[10px] text-white">
+              <span
+                className={`ml-2 rounded-full px-2 py-0.5 text-[10px] font-bold transition bg-pink-500 text-white 
+                  active === "Yearly"
+                    ? "bg-white text-primary"
+                    : "bg-pink-500 text-white"
+                `}
+              >
                 -20%
               </span>
             )}
