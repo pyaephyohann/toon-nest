@@ -182,7 +182,7 @@ export default function HeroCarousel() {
             <button
               key={index}
               onClick={() => setCurrent([index, index > current ? 1 : -1])}
-              className={`h-2.5 rounded-full transition-all duration-300 ${
+              className={`h-2.5 cursor-pointer rounded-full transition-all duration-300 ${
                 current === index
                   ? "w-8 bg-primary"
                   : "w-2.5 bg-white/40 hover:bg-white/70"
