@@ -6,6 +6,8 @@ import Link from "next/link";
 import { BadgeCheck, Star, Users, ArrowRight, Clock3 } from "lucide-react";
 
 import { HistoryItem } from "./types";
+import ProgressBar from "@/components/ui/ProgressBar";
+import Rating from "@/components/ui/Rating";
 
 interface Props {
   manga: HistoryItem;
@@ -66,31 +68,14 @@ export default function HistoryCard({ manga }: Props) {
         {/* Progress */}
 
         <div className="mt-4">
-          <div className="h-2 overflow-hidden rounded-full bg-secondary">
-            <div
-              className="h-full rounded-full bg-primary transition-all"
-              style={{
-                width: `${manga.progress}%`,
-              }}
-            />
-          </div>
-
-          <div className="mt-2 flex justify-between text-xs">
-            <span className="text-muted-foreground">Reading Progress</span>
-
-            <span className="text-primary">{manga.progress}%</span>
-          </div>
+          <ProgressBar progress={manga.progress} showLabel={true} size="sm" />
         </div>
       </div>
 
       {/* Stats */}
 
       <div className="w-32 space-y-4">
-        <div className="flex items-center gap-2">
-          <Star size={18} className="fill-yellow-400 text-yellow-400" />
-
-          <span>{manga.rating}</span>
-        </div>
+        <Rating rating={manga.rating} size="md" />
 
         <div className="flex items-center gap-2 text-muted-foreground">
           <Users size={16} />

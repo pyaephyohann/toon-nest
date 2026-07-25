@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 
 import { CompletedManga } from "./types";
+import { getRankColorLinear } from "@/lib/utils";
+import Rating from "@/components/ui/Rating";
 
 interface Props {
   manga: CompletedManga;
@@ -23,15 +25,7 @@ export default function CompletedCard({ manga }: Props) {
     <article className="group flex items-center gap-6 rounded-2xl border border-border bg-gradient-to-br from-card to-card/80 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500 hover:shadow-[0_0_40px_rgba(16,185,129,0.15)] hover:shadow-emerald-500/10">
       {/* Rank */}
       <div
-        className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-xl font-bold shadow-lg transition-transform duration-300 group-hover:scale-110 ${
-          manga.rank === 1
-            ? "bg-linear-to-br from-yellow-300 to-yellow-500 text-black shadow-yellow-500/30"
-            : manga.rank === 2
-              ? "bg-linear-to-br from-slate-200 to-slate-400 text-black shadow-slate-400/30"
-              : manga.rank === 3
-                ? "bg-linear-to-br from-orange-300 to-orange-500 text-white shadow-orange-500/30"
-                : "bg-secondary text-foreground"
-        }`}
+        className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-xl font-bold shadow-lg transition-transform duration-300 group-hover:scale-110 ${getRankColorLinear(manga.rank)}`}
       >
         {manga.rank}
       </div>
@@ -100,8 +94,7 @@ export default function CompletedCard({ manga }: Props) {
       {/* Stats */}
       <div className="flex flex-col items-center gap-2">
         <div className="flex items-center gap-1.5 rounded-full bg-yellow-400/10 px-3 py-1.5">
-          <Star size={16} className="fill-yellow-400 text-yellow-400" />
-          <span className="font-semibold text-yellow-400">{manga.rating}</span>
+          <Rating rating={manga.rating} size="sm" />
         </div>
 
         <div className="flex items-center gap-1.5 text-muted-foreground/80">

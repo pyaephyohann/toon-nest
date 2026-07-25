@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import ProgressBar from "@/components/ui/ProgressBar";
 
 const continueReading = [
   {
@@ -40,14 +41,7 @@ export default function ContinueReading() {
             <div className="flex-1">
               <h4 className="truncate font-semibold">{item.title}</h4>
 
-              <div className="mt-3 h-2 rounded-full bg-secondary">
-                <div
-                  className="h-full rounded-full bg-primary"
-                  style={{
-                    width: `${item.progress}%`,
-                  }}
-                />
-              </div>
+              <ProgressBar progress={item.progress} showLabel={false} size="sm" />
 
               <p className="mt-2 text-xs text-muted-foreground">
                 {item.progress}% Complete

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import ProgressBar from "./ProgressBar";
+import ProgressBar from "@/components/ui/ProgressBar";
 import { ContinueReading } from "./types";
 
 interface Props {

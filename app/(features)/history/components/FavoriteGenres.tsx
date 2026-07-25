@@ -1,30 +1,27 @@
 "use client";
 
+import ProgressBar from "@/components/ui/ProgressBar";
+
 const genres = [
   {
     name: "Action",
     value: 92,
-    color: "bg-red-500",
   },
   {
     name: "Fantasy",
     value: 84,
-    color: "bg-violet-500",
   },
   {
     name: "Adventure",
     value: 71,
-    color: "bg-sky-500",
   },
   {
     name: "Magic",
     value: 56,
-    color: "bg-emerald-500",
   },
   {
     name: "Romance",
     value: 40,
-    color: "bg-pink-500",
   },
 ];
 
@@ -46,14 +43,7 @@ export default function FavoriteGenres() {
               <span>{genre.value}%</span>
             </div>
 
-            <div className="h-2 overflow-hidden rounded-full bg-secondary">
-              <div
-                className={`h-full rounded-full ${genre.color}`}
-                style={{
-                  width: `${genre.value}%`,
-                }}
-              />
-            </div>
+            <ProgressBar progress={genre.value} showLabel={false} size="md" />
           </div>
         ))}
       </div>

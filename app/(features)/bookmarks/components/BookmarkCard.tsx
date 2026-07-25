@@ -13,20 +13,15 @@ import {
 } from "lucide-react";
 
 import { BookmarkManga } from "./types";
+import { getRankColor } from "@/lib/utils";
+import ProgressBar from "@/components/ui/ProgressBar";
 
 interface Props {
   manga: BookmarkManga;
 }
 
 export default function BookmarkCard({ manga }: Props) {
-  const rankColor =
-    manga.rank === 1
-      ? "from-yellow-300 to-yellow-500 text-black shadow-yellow-500/40"
-      : manga.rank === 2
-        ? "from-slate-200 to-slate-400 text-black shadow-slate-400/40"
-        : manga.rank === 3
-          ? "from-orange-300 to-orange-500 text-white shadow-orange-500/40"
-          : "bg-secondary text-white";
+  const rankColor = getRankColor(manga.rank);
 
   return (
     <article className="group relative overflow-hidden rounded-2xl border border-border bg-card transition-all duration-300 hover:-translate-y-1 hover:border-primary hover:shadow-[0_0_35px_rgba(139,92,246,.18)]">
@@ -87,14 +82,7 @@ export default function BookmarkCard({ manga }: Props) {
               </span>
             </div>
 
-            <div className="h-2 overflow-hidden rounded-full bg-secondary">
-              <div
-                className="h-full rounded-full bg-primary transition-all duration-700"
-                style={{
-                  width: `${manga.progress}%`,
-                }}
-              />
-            </div>
+            <ProgressBar progress={manga.progress} showLabel={false} size="md" />
           </div>
         </div>
 

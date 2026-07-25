@@ -1,25 +1,5 @@
-export interface BookmarkManga {
-  id: string;
+import { MangaWithRank, MangaWithProgress, MangaWithReaders } from "@/types/manga";
 
-  rank: number;
-
-  title: string;
-
-  slug: string;
-
-  cover: string;
-
-  chapter: number;
-
-  rating: number;
-
-  readers: string;
-
-  genres: string[];
-
-  progress: number;
-
-  verified?: boolean;
-
+export interface BookmarkManga extends MangaWithRank, MangaWithProgress, MangaWithReaders {
   status: "Reading" | "Plan To Read" | "Completed" | "On Hold";
 }

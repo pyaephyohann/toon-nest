@@ -1,10 +1,10 @@
 import HeroCarousel from "./components/HeroCarousel";
 import { genres } from "./(genres)/data";
-import GenreSection from "./(genres)/page";
+import GenreSection from "./(genres)/GenreSection";
 import { continueReadingData } from "./(series)/continue-reading/data";
-import ContinueReadingSection from "./(series)/continue-reading/page";
+import ContinueReadingSection from "./(series)/continue-reading/ContinueReadingSection";
 import { popularWeek } from "./(series)/ranking/data";
-import RankingSection from "./(series)/ranking/page";
+import RankingSection from "./(series)/ranking/RankingSection";
 
 const Home = () => {
   return (

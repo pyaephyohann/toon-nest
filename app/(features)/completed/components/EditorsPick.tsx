@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Star, BadgeCheck } from "lucide-react";
 
 import { CompletedManga } from "./types";
+import Rating from "@/components/ui/Rating";
 
 interface Props {
   manga: CompletedManga;
@@ -36,10 +37,8 @@ export default function EditorsPick({ manga }: Props) {
             )}
           </div>
 
-          <div className="mt-4 flex items-center gap-2">
-            <Star size={18} className="fill-yellow-400 text-yellow-400" />
-
-            <span>{manga.rating}</span>
+          <div className="mt-4">
+            <Rating rating={manga.rating} size="md" />
           </div>
 
           <Link

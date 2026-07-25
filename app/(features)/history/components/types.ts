@@ -1,23 +1,7 @@
-export interface HistoryItem {
-  id: string;
-  rank: number;
+import { MangaWithRank, MangaWithProgress, MangaWithReaders } from "@/types/manga";
 
-  title: string;
-  slug: string;
-  cover: string;
-
-  chapter: number;
+export interface HistoryItem extends MangaWithRank, MangaWithProgress, MangaWithReaders {
   totalChapters: number;
-
-  progress: number;
-
-  genres: string[];
-
-  rating: number;
-  readers: string;
-
-  verified?: boolean;
-
   lastRead: string;
 }
 

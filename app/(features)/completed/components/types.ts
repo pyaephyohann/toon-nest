@@ -1,21 +1,8 @@
-export interface CompletedManga {
-  id: string;
-  rank: number;
-  title: string;
-  slug: string;
-  cover: string;
+import { MangaWithRank, MangaWithReaders } from "@/types/manga";
 
-  genres: string[];
-
-  rating: number;
-
-  readers: string;
-
+export interface CompletedManga extends MangaWithRank, MangaWithReaders {
   chapters: number;
-
   completed: boolean;
-
-  verified?: boolean;
 }
 
 export interface Collection {

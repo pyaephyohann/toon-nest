@@ -1,5 +1,7 @@
 "use client";
 
+import ProgressBar from "@/components/ui/ProgressBar";
+
 const genres = [
   {
     name: "Action",
@@ -37,14 +39,7 @@ export default function GenreStats() {
               <span className="text-muted-foreground">{genre.total}</span>
             </div>
 
-            <div className="h-2 rounded-full bg-secondary">
-              <div
-                className="h-full rounded-full bg-primary"
-                style={{
-                  width: `${genre.width}%`,
-                }}
-              />
-            </div>
+            <ProgressBar progress={genre.width} showLabel={false} size="md" />
           </div>
         ))}
       </div>

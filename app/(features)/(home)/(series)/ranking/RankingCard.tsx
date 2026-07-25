@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import Rating from "./Rating";
-import Badge from "./Badge";
+import Rating from "@/components/ui/Rating";
+import Badge from "@/components/ui/Badge";
 import { RankingSeries } from "./types";
 
 interface Props {
@@ -25,7 +25,7 @@ export default function RankingCard({ manga }: Props) {
           {manga.rank}
         </div>
 
-        <Badge badge={manga.badge} />
+        {manga.badge && <Badge>{manga.badge}</Badge>}
       </div>
 
       <div className="mt-3 space-y-2">
