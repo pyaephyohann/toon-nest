@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 import {
-  Star,
   Users,
   ArrowRight,
   ArrowUp,
@@ -15,6 +14,7 @@ import {
 
 import RankBadge from "./RankBadge";
 import { PopularManga } from "./types";
+import Rating from "@/components/ui/Rating";
 
 interface Props {
   manga: PopularManga;
@@ -70,9 +70,7 @@ export default function TrendingCard({ manga }: Props) {
 
       <div className="space-y-3 text-right">
         <div className="flex items-center justify-end gap-2">
-          <Star size={16} className="fill-yellow-400 text-yellow-400" />
-
-          <span>{manga.rating}</span>
+          <Rating rating={manga.rating} size="sm" />
         </div>
 
         <div className="flex items-center justify-end gap-2 text-sm text-muted-foreground">

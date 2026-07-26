@@ -1,29 +1,23 @@
+import FilterBar from "@/components/ui/FilterBar";
+
 const filters = [
-  "All",
-  "Action",
-  "Fantasy",
-  "Romance",
-  "School",
-  "Comedy",
-  "Drama",
-  "Completed",
+  { label: "All", value: "all" },
+  { label: "Action", value: "action" },
+  { label: "Fantasy", value: "fantasy" },
+  { label: "Romance", value: "romance" },
+  { label: "School", value: "school" },
+  { label: "Comedy", value: "comedy" },
+  { label: "Drama", value: "drama" },
+  { label: "Completed", value: "completed" },
 ];
 
 export default function UpdateFilter() {
   return (
-    <div className="flex flex-wrap gap-3">
-      {filters.map((filter) => (
-        <button
-          key={filter}
-          className={`rounded-xl px-5 py-2 transition ${
-            filter === "All"
-              ? "bg-primary text-white"
-              : "bg-card hover:bg-secondary"
-          }`}
-        >
-          {filter}
-        </button>
-      ))}
-    </div>
+    <FilterBar
+      filters={filters}
+      activeFilter="all"
+      showViewToggle={false}
+      theme="default"
+    />
   );
 }

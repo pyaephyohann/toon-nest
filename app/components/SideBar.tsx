@@ -12,6 +12,8 @@ import {
   CheckCheck,
 } from "lucide-react";
 
+import PremiumCard from "@/components/ui/PremiumCard";
+
 const navItems = [
   { label: "Home", href: "/", icon: House },
   { label: "Updates", href: "/updates", icon: Clock3 },
@@ -107,17 +109,12 @@ export default function Sidebar() {
 
       {/* Premium Card */}
       <div className="p-4 pt-0">
-        <div className="rounded-2xl bg-primary/30 p-4">
-          <h3 className="font-semibold">Go Premium</h3>
-          <ul className="mt-3 space-y-2 text-xs text-muted-foreground">
-            <li>✓ No ads</li>
-            <li>✓ Early access</li>
-            <li>✓ High quality</li>
-          </ul>
-          <button className="mt-4 w-full rounded-xl bg-primary py-2 text-white">
-            View Plans
-          </button>
-        </div>
+        <PremiumCard
+          title="Go Premium"
+          features={["No ads", "Early access", "High quality"]}
+          buttonText="View Plans"
+          variant="simple"
+        />
       </div>
     </aside>
   );

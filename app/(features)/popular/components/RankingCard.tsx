@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Eye, Star } from "lucide-react";
+import { ArrowRight, Eye } from "lucide-react";
 
 import { PopularManga } from "./types";
+import Rating from "@/components/ui/Rating";
 
 interface Props {
   manga: PopularManga;
@@ -45,10 +46,7 @@ export default function RankingCard({ manga }: Props) {
         </div>
 
         <div className="mt-3 flex items-center gap-5 text-sm text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <Star size={15} className="fill-yellow-400 text-yellow-400" />
-            {manga.rating}
-          </div>
+          <Rating rating={manga.rating} size="sm" />
 
           <div className="flex items-center gap-1">
             <Eye size={15} />
