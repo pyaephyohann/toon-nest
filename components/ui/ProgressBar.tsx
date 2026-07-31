@@ -2,12 +2,14 @@ interface ProgressBarProps {
   progress: number;
   showLabel?: boolean;
   size?: "sm" | "md" | "lg";
+  customColor?: string;
 }
 
-export default function ProgressBar({ 
-  progress, 
+export default function ProgressBar({
+  progress,
   showLabel = true,
-  size = "md" 
+  size = "md",
+  customColor,
 }: ProgressBarProps) {
   const heights = {
     sm: "h-1",
@@ -25,9 +27,10 @@ export default function ProgressBar({
 
       <div className={`overflow-hidden rounded-full bg-secondary ${heights[size]}`}>
         <div
-          className="h-full rounded-full bg-primary transition-all duration-300"
+          className="h-full rounded-full transition-all duration-300"
           style={{
             width: `${progress}%`,
+            backgroundColor: customColor,
           }}
         />
       </div>
