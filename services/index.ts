@@ -8,6 +8,7 @@ export { authService, AuthService } from "./auth.service";
 export { seriesService, SeriesService } from "./series.service";
 export { chapterService, ChapterService } from "./chapter.service";
 export { userService, UserService } from "./user.service";
+export { genreService, GenreService } from "./genre.service";
 export { bookmarkService, BookmarkService } from "./bookmark.service";
 export { readingHistoryService, ReadingHistoryService } from "./reading-history.service";
 export { ratingService, RatingService } from "./rating.service";
