@@ -1,11 +1,7 @@
-import {
-  BookmarkHeader,
-  FilterBar,
-  BookmarkList,
-  BookmarkSideBar,
-  LoadMore,
-  bookmarks,
-} from "./components";
+import BookmarkHeader from "./components/BookmarkHeader";
+import FilterBar from "./components/FilterBar";
+import BookmarksPageContainer from "./components/BookmarksPageContainer";
+import BookmarkSideBar from "./components/BookmarkSideBar";
 
 export default function BookmarksPage() {
   return (
@@ -20,9 +16,7 @@ export default function BookmarksPage() {
       <section className="grid gap-8 xl:grid-cols-[1fr_320px]">
         {/* Left */}
         <div className="space-y-6 min-w-0">
-          <BookmarkList items={bookmarks} />
-
-          <LoadMore />
+          <BookmarksPageContainer />
         </div>
 
         {/* Right */}
