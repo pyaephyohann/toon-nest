@@ -7,6 +7,7 @@ datasource db {
   provider = "postgresql"
 }
 
+// Enums
 enum UserRole {
   USER
   ADMIN
@@ -24,6 +25,26 @@ enum UnlockType {
   PREMIUM
 }
 
+enum ReadingStatus {
+  READING
+  PLAN_TO_READ
+  COMPLETED
+  DROPPED
+}
+
+enum SubscriptionPlan {
+  MONTHLY
+  YEARLY
+  LIFETIME
+}
+
+enum TimePeriod {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+// Core Models
 model User {
   id       String @id @default(cuid())
   username String @unique
@@ -37,18 +58,14 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  bookmarks Bookmark[]
-  history   ReadingHistory[]
-  comments  Comment[]
-  ratings   Rating[]
-}
-
-model Genre {
-  id   String @id @default(cuid())
-  name String @unique
-  slug String @unique
-
-  series SeriesGenre[]
+  // Relations
+  bookmarks      Bookmark[]
+  history        ReadingHistory[]
+  comments       Comment[]
+  ratings        Rating[]
+  subscriptions  Subscription[]
+  chapterUnlocks ChapterUnlock[]
+  seriesStatuses UserSeriesStatus[]
 }
 
 model Series {
@@ -67,26 +84,31 @@ model Series {
 
   status SeriesStatus @default(ONGOING)
 
-  views Int @default(0)
+  // Performance fields (pre-computed for queries)
+  views         Int    @default(0)
+  averageRating Float  @default(0)
+  totalRatings  Int    @default(0)
+  totalChapters Int    @default(0)
+  readersCount  Int    @default(0)
+
+  // UI flags
+  verified  Boolean @default(false)
+  isFeatured Boolean @default(false)
+  isNew     Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  chapters Chapter[]
-  genres   SeriesGenre[]
-
-  bookmarks Bookmark[]
-  ratings   Rating[]
-}
-
-model SeriesGenre {
-  seriesId String
-  genreId  String
-
-  series Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
-  genre  Genre  @relation(fields: [genreId], references: [id], onDelete: Cascade)
-
-  @@id([seriesId, genreId])
+  // Relations
+  chapters      Chapter[]
+  genres        SeriesGenre[]
+  tags          SeriesTag[]
+  bookmarks     Bookmark[]
+  ratings       Rating[]
+  stats         SeriesStats[]
+  collections   CollectionSeries[]
+  editorPicks   EditorPick[]
+  userStatuses  UserSeriesStatus[]
 }
 
 model Chapter {
@@ -97,8 +119,7 @@ model Chapter {
   chapterNumber Decimal @db.Decimal(5, 2)
 
   title String?
-
-  slug String
+  slug  String
 
   views Int @default(0)
 
@@ -107,13 +128,16 @@ model Chapter {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  series Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
-
+  // Relations
+  series           Series           @relation(fields: [seriesId], references: [id], onDelete: Cascade)
   pages            ChapterPage[]
   comments         Comment[]
   readingHistories ReadingHistory[]
+  chapterUnlocks   ChapterUnlock[]
 
   @@unique([seriesId, chapterNumber])
+  @@index([seriesId])
+  @@index([updatedAt])
 }
 
 model ChapterPage {
@@ -125,11 +149,77 @@ model ChapterPage {
 
   imageUrl String
 
+  // Relations
   chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
 
   @@unique([chapterId, pageNumber])
 }
 
+model Genre {
+  id   String @id @default(cuid())
+  name String @unique
+  slug String @unique
+
+  // UI fields
+  icon  String?
+  color String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  series SeriesGenre[]
+  stats  GenreStats[]
+}
+
+model Tag {
+  id   String @id @default(cuid())
+  name String @unique
+  slug String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  series SeriesTag[]
+}
+
+// Junction Tables
+model SeriesGenre {
+  seriesId String
+  genreId  String
+
+  series Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  genre  Genre  @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@id([seriesId, genreId])
+}
+
+model SeriesTag {
+  seriesId String
+  tagId    String
+
+  series Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([seriesId, tagId])
+}
+
+model UserSeriesStatus {
+  userId   String
+  seriesId String
+
+  status ReadingStatus @default(READING)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  series Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+
+  updatedAt DateTime @updatedAt
+
+  @@id([userId, seriesId])
+}
+
+// User Activity Models
 model Bookmark {
   id String @id @default(cuid())
 
@@ -154,6 +244,9 @@ model ReadingHistory {
   chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
 
   updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([updatedAt])
 }
 
 model Rating {
@@ -167,6 +260,9 @@ model Rating {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   series Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([userId, seriesId])
 }
 
@@ -179,32 +275,117 @@ model Comment {
   chapterId String
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
 }
 
+// Analytics Models
+model SeriesStats {
+  id        String @id @default(cuid())
+  seriesId  String
+
+  date      DateTime
+  period    TimePeriod
+
+  views     Int    @default(0)
+  readers   Int    @default(0)
+  bookmarks Int    @default(0)
+  ratings   Int    @default(0)
+
+  series Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+
+  @@unique([seriesId, date, period])
+  @@index([seriesId])
+  @@index([date])
+  @@index([period])
+}
+
+model GenreStats {
+  id     String @id @default(cuid())
+  genreId String
+
+  date        DateTime
+  period      TimePeriod
+
+  readers     Int    @default(0)
+  seriesCount Int    @default(0)
+
+  genre Genre @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@unique([genreId, date, period])
+  @@index([genreId])
+  @@index([date])
+}
+
+// Curation Models
+model Collection {
+  id        String @id @default(cuid())
+  title     String
+  slug      String @unique
+  image     String
+  seriesCount Int @default(0)
+
+  description String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  series CollectionSeries[]
+}
+
+model CollectionSeries {
+  collectionId String
+  seriesId     String
+
+  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  series     Series     @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+
+  @@id([collectionId, seriesId])
+}
+
+model EditorPick {
+  id        String @id @default(cuid())
+  seriesId  String
+
+  featuredAt DateTime @default(now())
+
+  series Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+
+  @@unique([seriesId])
+  @@index([featuredAt])
+}
+
+// Monetization Models
 model Subscription {
-  id String @id @default(cuid())
+  id        String @id @default(cuid())
+  userId    String
 
-  userId String
-
-  plan String
-
+  plan      SubscriptionPlan
   startsAt  DateTime
   expiresAt DateTime
 
   createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
 }
 
 model ChapterUnlock {
-  id String @id @default(cuid())
-
+  id        String @id @default(cuid())
   userId    String
   chapterId String
 
   createdAt DateTime  @default(now())
   expiresAt DateTime?
 
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
   @@unique([userId, chapterId])
+  @@index([userId])
+  @@index([chapterId])
 }

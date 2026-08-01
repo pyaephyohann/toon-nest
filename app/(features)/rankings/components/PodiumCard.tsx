@@ -5,7 +5,7 @@ import { Crown, Users } from "lucide-react";
 import Link from "next/link";
 
 import Rating from "@/components/ui/Rating";
-import { getRankColor } from "@/lib/utils";
+import { getRankColor } from "@/utils";
 
 interface Props {
   rank: number;

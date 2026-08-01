@@ -7,7 +7,7 @@ import { ArrowUp, ArrowDown, Users, BadgeCheck } from "lucide-react";
 import { RankingManga } from "./types";
 
 import Rating from "@/components/ui/Rating";
-import { getRankColor } from "@/lib/utils";
+import { getRankColor } from "@/utils";
 import Badge from "@/components/ui/Badge";
 
 interface Props {

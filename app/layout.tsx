@@ -4,7 +4,7 @@ import "./globals.css";
 import Sidebar from "./components/SideBar";
 import Navbar from "./components/NavBar";
 
-import ReduxProvider from "@/redux/provider";
+import ReduxProvider from "@/store/provider";
 
 const inter = Inter({
   subsets: ["latin"],

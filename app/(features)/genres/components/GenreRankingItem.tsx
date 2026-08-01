@@ -1,7 +1,7 @@
 "use client";
 
 import ProgressBar from "@/components/ui/ProgressBar";
-import { getRankColor } from "@/lib/utils";
+import { getRankColor } from "@/utils";
 
 interface Props {
   rank: number;

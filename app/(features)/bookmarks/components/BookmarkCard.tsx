@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 import { BookmarkManga } from "./types";
-import { getRankColor } from "@/lib/utils";
+import { getRankColor } from "@/utils";
 import ProgressBar from "@/components/ui/ProgressBar";
 
 interface Props {

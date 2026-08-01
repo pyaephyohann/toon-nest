@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 import { CompletedManga } from "./types";
-import { getRankColorLinear } from "@/lib/utils";
+import { getRankColorLinear } from "@/utils";
 import Rating from "@/components/ui/Rating";
 
 interface Props {
