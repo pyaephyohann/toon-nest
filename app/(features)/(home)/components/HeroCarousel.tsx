@@ -14,9 +14,14 @@ interface Banner {
   image: string;
   genres: string[];
   style: BannerStyle;
+  slug?: string;
 }
 
-const banners: Banner[] = [
+interface Props {
+  banners?: Banner[];
+}
+
+const defaultBanners: Banner[] = [
   {
     id: "1",
     title: "Solo Max Level Newbie",
@@ -61,7 +66,7 @@ const variants = {
   }),
 };
 
-export default function HeroCarousel() {
+export default function HeroCarousel({ banners = defaultBanners }: Props) {
   const [[current, direction], setCurrent] = useState([0, 0]);
   const [paused, setPaused] = useState(false);
 
