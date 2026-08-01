@@ -1,6 +1,7 @@
 /**
+ * GET /api/ratings
  * POST /api/ratings
- * Create/update rating endpoint
+ * Rating endpoints
  */
 
 import { NextRequest } from "next/server";
@@ -8,6 +9,27 @@ import { auth } from "@/auth";
 import { successResponse, handleApiError, errorResponse, createdResponse } from "@/lib/api/index";
 import { HTTP_STATUS, ERROR_CODES } from "@/lib/api/index";
 import { ratingService } from "@/services";
+
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const seriesId = searchParams.get("seriesId");
+
+    if (!seriesId) {
+      return errorResponse(
+        ERROR_CODES.VALIDATION_ERROR,
+        "SeriesId is required",
+        HTTP_STATUS.BAD_REQUEST
+      );
+    }
+
+    const ratings = await ratingService.getRatingsBySeries(seriesId);
+
+    return successResponse(ratings, "Ratings retrieved successfully");
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {

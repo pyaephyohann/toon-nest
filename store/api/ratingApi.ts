@@ -16,8 +16,41 @@ export interface Rating {
   user?: any;
 }
 
+export interface RatingSummary {
+  averageRating: number;
+  totalRatings: number;
+  distribution: {
+    5: number;
+    4: number;
+    3: number;
+    2: number;
+    1: number;
+  };
+}
+
 export const ratingApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    getRatingsBySeriesId: builder.query<Rating[], { seriesId: string }>({
+      query: ({ seriesId }) => ({
+        url: "/ratings",
+        method: "GET",
+        params: { seriesId },
+      }),
+      providesTags: (result, error, { seriesId }) => [
+        { type: tagTypes.MANGA, id: seriesId },
+        tagTypes.RATING,
+      ],
+    }),
+    getRatingSummary: builder.query<RatingSummary, { seriesId: string }>({
+      query: ({ seriesId }) => ({
+        url: `/ratings/summary/${seriesId}`,
+        method: "GET",
+      }),
+      providesTags: (result, error, { seriesId }) => [
+        { type: tagTypes.MANGA, id: seriesId },
+        tagTypes.RATING,
+      ],
+    }),
     addRating: builder.mutation<Rating, { seriesId: string; rating: number }>({
       query: (data) => ({
         url: "/ratings",
@@ -26,6 +59,16 @@ export const ratingApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: (result, error, { seriesId }) => [
         { type: tagTypes.MANGA, id: seriesId },
+        tagTypes.RATING,
+      ],
+    }),
+    updateRating: builder.mutation<Rating, { id: string; rating: number }>({
+      query: ({ id, rating }) => ({
+        url: `/ratings/${id}`,
+        method: "PATCH",
+        body: { rating },
+      }),
+      invalidatesTags: (result, error, { id }) => [
         tagTypes.RATING,
       ],
     }),
@@ -40,6 +83,9 @@ export const ratingApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useGetRatingsBySeriesIdQuery,
+  useGetRatingSummaryQuery,
   useAddRatingMutation,
+  useUpdateRatingMutation,
   useDeleteRatingMutation,
 } = ratingApi;

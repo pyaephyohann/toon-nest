@@ -3,6 +3,7 @@
 import { useGetMangaByIdQuery } from "@/store/api";
 import { useGetChaptersBySeriesIdQuery } from "@/store/api";
 import { Chapter } from "@/store/api";
+import RatingsSection from "./RatingsSection";
 
 interface Props {
   seriesId: string;
@@ -81,6 +82,9 @@ export default function ChapterList({ seriesId }: Props) {
           </div>
         )}
       </div>
+
+      {/* Ratings Section */}
+      <RatingsSection seriesId={seriesId} />
     </div>
   );
 }

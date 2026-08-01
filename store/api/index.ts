@@ -12,7 +12,7 @@ export { genreApi, useGetGenresQuery, useGetGenreByIdQuery, useCreateGenreMutati
 export { bookmarkApi, useGetBookmarksQuery, useAddBookmarkMutation, useToggleBookmarkMutation, useDeleteBookmarkMutation } from "./bookmarkApi";
 export { historyApi, useGetHistoryQuery, useSaveHistoryMutation, useClearHistoryMutation, useDeleteHistoryEntryMutation } from "./historyApi";
 export { commentApi, useGetCommentsByChapterIdQuery, useGetCommentByIdQuery, useAddCommentMutation, useUpdateCommentMutation, useDeleteCommentMutation } from "./commentApi";
-export { ratingApi, useAddRatingMutation, useDeleteRatingMutation } from "./ratingApi";
+export { ratingApi, useGetRatingsBySeriesIdQuery, useGetRatingSummaryQuery, useAddRatingMutation, useUpdateRatingMutation, useDeleteRatingMutation } from "./ratingApi";
 export { subscriptionApi, useGetSubscriptionsQuery, useCreateSubscriptionMutation, useCancelSubscriptionMutation } from "./subscriptionApi";
 
 // Re-export types with unique names to avoid conflicts
