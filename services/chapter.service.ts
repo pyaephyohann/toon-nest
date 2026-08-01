@@ -5,6 +5,8 @@
 
 import { chapterRepository, seriesRepository } from "@/repositories";
 import { UnlockType } from "@/app/generated/prisma/client";
+import { subscriptionService } from "./subscription.service";
+import { chapterUnlockService } from "./chapter-unlock.service";
 
 export class ChapterService {
   /**
@@ -152,8 +154,8 @@ export class ChapterService {
    */
   async canUserAccessChapter(
     chapterId: string,
-    userId: string
-  ): Promise<boolean> {
+    userId: string | null
+  ): Promise<{ canAccess: boolean; reason?: string }> {
     const chapter = await chapterRepository.findById(chapterId);
     if (!chapter) {
       throw new Error("Chapter not found");
@@ -161,13 +163,64 @@ export class ChapterService {
 
     // Free chapters are accessible to all
     if (chapter.unlockType === UnlockType.FREE) {
-      return true;
+      return { canAccess: true };
     }
 
-    // AD and PREMIUM chapters require user authentication
-    // This will be implemented with user subscription checks
-    // For now, return false for non-free chapters
-    return false;
+    // Premium and AD chapters require authentication
+    if (!userId) {
+      return { canAccess: false, reason: "Authentication required" };
+    }
+
+    // Check premium subscription for premium chapters
+    if (chapter.unlockType === UnlockType.PREMIUM) {
+      const isPremium = await subscriptionService.isUserPremium(userId);
+      if (!isPremium) {
+        return { canAccess: false, reason: "Premium subscription required" };
+      }
+      return { canAccess: true };
+    }
+
+    // Check unlock record for AD chapters
+    if (chapter.unlockType === UnlockType.AD) {
+      const isUnlocked = await chapterUnlockService.checkUnlock(userId, chapterId);
+      if (!isUnlocked) {
+        return { canAccess: false, reason: "Chapter not unlocked" };
+      }
+      return { canAccess: true };
+    }
+
+    return { canAccess: false, reason: "Unknown unlock type" };
+  }
+
+  /**
+   * Get chapter with access information
+   */
+  async getChapterWithAccessInfo(chapterId: string, userId: string | null) {
+    const chapter = await chapterRepository.findById(chapterId);
+    if (!chapter) {
+      throw new Error("Chapter not found");
+    }
+
+    const accessInfo = await this.canUserAccessChapter(chapterId, userId);
+
+    return {
+      ...chapter,
+      access: accessInfo,
+    };
+  }
+
+  /**
+   * Unlock chapter for user
+   */
+  async unlockChapterForUser(userId: string, chapterId: string) {
+    return chapterUnlockService.unlockChapter(userId, chapterId);
+  }
+
+  /**
+   * Unlock chapter via AD for user
+   */
+  async unlockChapterWithAd(userId: string, chapterId: string) {
+    return chapterUnlockService.unlockChapterWithAd(userId, chapterId);
   }
 }
 
