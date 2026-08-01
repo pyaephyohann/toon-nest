@@ -1,11 +1,10 @@
 /**
  * Authentication utilities
- * Prepared for Milestone 5: Authentication
- * Currently placeholder functions - will be implemented with bcrypt, JWT, etc.
+ * Password hashing and comparison utilities
+ * JWT logic removed - now handled by Auth.js
  */
 
 import { hash, compare } from "bcryptjs";
-import { sign, verify } from "jsonwebtoken";
 
 const SALT_ROUNDS = 12;
 
@@ -24,36 +23,4 @@ export async function comparePassword(
   hash: string
 ): Promise<boolean> {
   return compare(password, hash);
-}
-
-/**
- * Generate a JWT token
- */
-export function generateToken(payload: {
-  userId: string;
-  email: string;
-  role: string;
-}): string {
-  const secret = process.env.JWT_SECRET || "fallback-secret-change-in-production";
-  return sign(payload, secret, { expiresIn: "7d" });
-}
-
-/**
- * Verify a JWT token
- */
-export function verifyToken(token: string): {
-  userId: string;
-  email: string;
-  role: string;
-} | null {
-  try {
-    const secret = process.env.JWT_SECRET || "fallback-secret-change-in-production";
-    return verify(token, secret) as {
-      userId: string;
-      email: string;
-      role: string;
-    };
-  } catch {
-    return null;
-  }
 }

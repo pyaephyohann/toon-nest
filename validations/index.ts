@@ -10,7 +10,7 @@ export {
   type RegisterInput,
   type LoginInput,
   type ChangePasswordInput,
-} from "./auth.validation";
+} from "./auth.schema";
 
 export {
   createSeriesSchema,

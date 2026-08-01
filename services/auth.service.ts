@@ -1,95 +1,115 @@
 /**
  * Auth Service
  * Handles authentication business logic
- * Prepared for Milestone 5: Authentication
+ * Refactored for Auth.js integration
  */
 
-import { userRepository } from "@/repositories";
-import { hashPassword, comparePassword, generateToken } from "@/lib/auth";
+import { authRepository } from "@/repositories";
+import { hashPassword, comparePassword } from "@/lib/auth";
 import { UserRole } from "@/app/generated/prisma/client";
+import { loginSchema, registerSchema } from "@/validations";
+import type { LoginInput, RegisterInput } from "@/validations";
 
 export class AuthService {
   /**
+   * Validate credentials for login
+   * Called by Auth.js Credentials provider
+   */
+  async validateCredentials(email: string, password: string): Promise<{
+    id: string;
+    email: string;
+    username: string;
+    role: UserRole;
+  } | null> {
+    // Validate input
+    const validatedData = loginSchema.parse({ email, password });
+
+    // Find user by email
+    const user = await authRepository.findByEmailForAuth(validatedData.email);
+    if (!user) {
+      return null;
+    }
+
+    // Verify password
+    const isValid = await comparePassword(validatedData.password, user.password);
+    if (!isValid) {
+      return null;
+    }
+
+    // Return user data without password
+    return {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      role: user.role,
+    };
+  }
+
+  /**
    * Register a new user
    */
-  async register(data: {
-    username: string;
+  async register(data: RegisterInput): Promise<{
+    id: string;
     email: string;
-    password: string;
-  }): Promise<{ user: any; token: string }> {
+    username: string;
+    role: UserRole;
+  }> {
+    // Validate input
+    const validatedData = registerSchema.parse(data);
+
     // Check if user already exists
-    const emailExists = await userRepository.emailExists(data.email);
+    const emailExists = await authRepository.emailExists(validatedData.email);
     if (emailExists) {
       throw new Error("Email already exists");
     }
 
-    const usernameExists = await userRepository.usernameExists(data.username);
+    const usernameExists = await authRepository.usernameExists(validatedData.username);
     if (usernameExists) {
       throw new Error("Username already exists");
     }
 
     // Hash password
-    const hashedPassword = await hashPassword(data.password);
+    const hashedPassword = await hashPassword(validatedData.password);
 
     // Create user
-    const user = await userRepository.create({
-      username: data.username,
-      email: data.email,
-      password: hashedPassword,
+    const user = await authRepository.createWithHashedPassword({
+      username: validatedData.username,
+      email: validatedData.email,
+      hashedPassword,
       role: UserRole.USER,
     });
 
-    // Generate token
-    const token = generateToken({
-      userId: user.id,
+    // Return user without password
+    return {
+      id: user.id,
       email: user.email,
+      username: user.username,
       role: user.role,
-    });
-
-    return { user, token };
+    };
   }
 
   /**
-   * Login user
+   * Get user by ID (without password)
    */
-  async login(data: {
+  async getUserById(id: string): Promise<{
+    id: string;
     email: string;
-    password: string;
-  }): Promise<{ user: any; token: string }> {
-    // Find user by email
-    const user = await userRepository.findByEmail(data.email);
+    username: string;
+    role: UserRole;
+    avatar?: string | null;
+  } | null> {
+    const user = await authRepository.findByIdWithoutPassword(id);
     if (!user) {
-      throw new Error("Invalid credentials");
+      return null;
     }
 
-    // Verify password
-    const isValid = await comparePassword(data.password, user.password);
-    if (!isValid) {
-      throw new Error("Invalid credentials");
-    }
-
-    // Generate token
-    const token = generateToken({
-      userId: user.id,
+    return {
+      id: user.id,
       email: user.email,
+      username: user.username,
       role: user.role,
-    });
-
-    return { user, token };
-  }
-
-  /**
-   * Get user by ID
-   */
-  async getUserById(id: string): Promise<any> {
-    const user = await userRepository.findById(id);
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    // Remove password from response
-    const { password, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+      avatar: user.avatar,
+    };
   }
 }
 

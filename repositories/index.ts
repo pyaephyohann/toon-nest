@@ -8,3 +8,4 @@ export { userRepository, UserRepository } from "./user.repository";
 export { seriesRepository, SeriesRepository } from "./series.repository";
 export { chapterRepository, ChapterRepository } from "./chapter.repository";
 export { genreRepository, GenreRepository } from "./genre.repository";
+export { authRepository, AuthRepository } from "./auth.repository";

@@ -1,53 +1,54 @@
 /**
  * useAuth Hook
- * Authentication state and actions
- * Prepared for Milestone 5: Authentication
+ * Authentication state and actions using Auth.js
+ * Client-side hook for accessing Auth.js session
  */
 
-import { useState, useEffect } from "react";
+"use client";
+
+import { useSession, signIn, signOut } from "next-auth/react";
+import { UserRole } from "@/app/generated/prisma/client";
 
 interface AuthState {
-  user: any | null;
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    role: UserRole;
+  } | null;
   isLoading: boolean;
   isAuthenticated: boolean;
 }
 
 export function useAuth() {
-  const [state, setState] = useState<AuthState>({
-    user: null,
-    isLoading: true,
-    isAuthenticated: false,
-  });
-
-  useEffect(() => {
-    // Placeholder for authentication logic
-    // Will be implemented with actual auth in Milestone 5
-    setState({
-      user: null,
-      isLoading: false,
-      isAuthenticated: false,
-    });
-  }, []);
+  const { data: session, status } = useSession();
 
   const login = async (email: string, password: string) => {
-    // Placeholder for login logic
-    throw new Error("Login not yet implemented");
-  };
-
-  const register = async (username: string, email: string, password: string) => {
-    // Placeholder for register logic
-    throw new Error("Register not yet implemented");
+    await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
   };
 
   const logout = async () => {
-    // Placeholder for logout logic
-    throw new Error("Logout not yet implemented");
+    await signOut({ redirect: false });
   };
 
+  const user = session?.user
+    ? {
+        id: session.user.id,
+        email: session.user.email,
+        name: session.user.name,
+        role: session.user.role,
+      }
+    : null;
+
   return {
-    ...state,
+    user,
+    isLoading: status === "loading",
+    isAuthenticated: !!session?.user,
     login,
-    register,
     logout,
   };
 }
