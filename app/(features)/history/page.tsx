@@ -1,15 +1,11 @@
-import {
-  FavoriteGenres,
-  FilterBar,
-  HistoryHeader,
-  HistoryTimeline,
-  LoadMore,
-  ReadingCalendar,
-  ReadingStats,
-  RecentlyFinished,
-  ResumeJourney,
-  historyData,
-} from "./components";
+import HistoryHeader from "./components/HistoryHeader";
+import FilterBar from "./components/FilterBar";
+import HistoryPageContainer from "./components/HistoryPageContainer";
+import ReadingStats from "./components/ReadingStats";
+import RecentlyFinished from "./components/RecentlyFinished";
+import FavoriteGenres from "./components/FavoriteGenres";
+import ReadingCalendar from "./components/ReadingCalendar";
+import ResumeJourney from "./components/ResumeJourney";
 
 export default function HistoryPage() {
   return (
@@ -21,9 +17,7 @@ export default function HistoryPage() {
       <section className="grid min-w-0 gap-8 xl:grid-cols-[minmax(0,1fr)_320px]">
         {/* Left */}
         <div className="space-y-8">
-          <HistoryTimeline items={historyData} />
-
-          <LoadMore />
+          <HistoryPageContainer />
         </div>
 
         {/* Right Sidebar */}
