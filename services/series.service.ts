@@ -38,6 +38,7 @@ export class SeriesService {
     status?: SeriesStatus;
     genreId?: string;
     search?: string;
+    year?: number;
     orderBy?: {
       field: "views" | "averageRating" | "readersCount" | "createdAt" | "updatedAt";
       direction: "asc" | "desc";

@@ -58,12 +58,13 @@ export class SeriesRepository {
     status?: SeriesStatus;
     genreId?: string;
     search?: string;
+    year?: number;
     orderBy?: {
       field: "views" | "averageRating" | "readersCount" | "createdAt" | "updatedAt";
       direction: "asc" | "desc";
     };
   }): Promise<{ series: Series[]; total: number }> {
-    const { skip = 0, take = 20, status, genreId, search, orderBy } = options;
+    const { skip = 0, take = 20, status, genreId, search, year, orderBy } = options;
 
     const where: any = {};
 
@@ -83,7 +84,18 @@ export class SeriesRepository {
       where.OR = [
         { title: { contains: search, mode: "insensitive" } },
         { description: { contains: search, mode: "insensitive" } },
+        { author: { contains: search, mode: "insensitive" } },
+        { artist: { contains: search, mode: "insensitive" } },
       ];
+    }
+
+    if (year) {
+      const startDate = new Date(year, 0, 1);
+      const endDate = new Date(year + 1, 0, 1);
+      where.createdAt = {
+        gte: startDate,
+        lt: endDate,
+      };
     }
 
     const [series, total] = await Promise.all([

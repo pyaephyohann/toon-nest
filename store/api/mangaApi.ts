@@ -29,6 +29,13 @@ export interface Manga {
   updatedAt: string;
 }
 
+export interface MangaSuggestion {
+  id: string;
+  title: string;
+  slug: string;
+  coverImage: string;
+}
+
 export interface MangaListResponse {
   items: Manga[];
   total: number;
@@ -51,7 +58,7 @@ export interface CreateMangaRequest {
 
 export const mangaApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getMangaList: builder.query<MangaListResponse, { page?: number; limit?: number; status?: string; genreId?: string; search?: string }>({
+    getMangaList: builder.query<MangaListResponse, { page?: number; limit?: number; status?: string; genreId?: string; search?: string; year?: number; orderByField?: string; orderByDirection?: string }>({
       query: (params) => ({
         url: "/manga",
         method: "GET",
@@ -111,6 +118,14 @@ export const mangaApi = baseApi.injectEndpoints({
       }),
       providesTags: (result, error, { id }) => [{ type: tagTypes.RATING, id }],
     }),
+    getMangaSuggestions: builder.query<MangaSuggestion[], { search: string; limit?: number }>({
+      query: ({ search, limit = 5 }) => ({
+        url: "/manga",
+        method: "GET",
+        params: { search, limit },
+      }),
+      providesTags: [tagTypes.MANGA_LIST],
+    }),
   }),
 });
 
@@ -122,4 +137,5 @@ export const {
   useDeleteMangaMutation,
   useGetMangaChaptersQuery,
   useGetMangaRatingsQuery,
+  useGetMangaSuggestionsQuery,
 } = mangaApi;
