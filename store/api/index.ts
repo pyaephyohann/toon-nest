@@ -6,7 +6,7 @@
 export { baseApi } from "./baseApi";
 export { authApi, useLoginMutation, useRegisterMutation, useLogoutMutation, useMeQuery } from "./authApi";
 export { mangaApi, useGetMangaListQuery, useGetMangaByIdQuery, useCreateMangaMutation, useUpdateMangaMutation, useDeleteMangaMutation, useGetMangaChaptersQuery, useGetMangaRatingsQuery } from "./mangaApi";
-export { chapterApi, useGetChapterByIdQuery, useCreateChapterMutation, useUpdateChapterMutation, useDeleteChapterMutation, useGetChapterCommentsQuery, useUnlockChapterMutation } from "./chapterApi";
+export { chapterApi, useGetChapterByIdQuery, useGetChaptersBySeriesIdQuery, useCreateChapterMutation, useUpdateChapterMutation, useDeleteChapterMutation, useGetChapterCommentsQuery, useUnlockChapterMutation } from "./chapterApi";
 export { userApi, useGetUserByIdQuery, useUpdateUserMutation, useDeleteUserMutation, useChangePasswordMutation } from "./userApi";
 export { genreApi, useGetGenresQuery, useGetGenreByIdQuery, useCreateGenreMutation, useUpdateGenreMutation, useDeleteGenreMutation } from "./genreApi";
 export { bookmarkApi, useGetBookmarksQuery, useAddBookmarkMutation, useToggleBookmarkMutation, useDeleteBookmarkMutation } from "./bookmarkApi";

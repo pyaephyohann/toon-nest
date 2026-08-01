@@ -16,10 +16,17 @@ export interface Chapter {
   views: number;
   createdAt: string;
   updatedAt: string;
+  series?: any;
+  pages?: any[];
   access?: {
     canAccess: boolean;
     reason?: string;
   };
+}
+
+export interface ChapterListResponse {
+  chapters: Chapter[];
+  total: number;
 }
 
 export interface CreateChapterRequest {
@@ -38,6 +45,14 @@ export const chapterApi = baseApi.injectEndpoints({
         method: "GET",
       }),
       providesTags: (result) => result ? [{ type: tagTypes.CHAPTER, id: result.id }] : [],
+    }),
+    getChaptersBySeriesId: builder.query<ChapterListResponse, { id: string; page?: number; limit?: number; orderBy?: "asc" | "desc" }>({
+      query: ({ id, ...params }) => ({
+        url: `/manga/${id}/chapters`,
+        method: "GET",
+        params,
+      }),
+      providesTags: (result, error, { id }) => [{ type: tagTypes.CHAPTER_LIST, id }],
     }),
     createChapter: builder.mutation<Chapter, CreateChapterRequest>({
       query: (data) => ({
@@ -94,6 +109,7 @@ export const chapterApi = baseApi.injectEndpoints({
 
 export const {
   useGetChapterByIdQuery,
+  useGetChaptersBySeriesIdQuery,
   useCreateChapterMutation,
   useUpdateChapterMutation,
   useDeleteChapterMutation,
