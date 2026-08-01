@@ -5,4 +5,6 @@ export interface ContinueReading {
   coverImage: string;
   chapter: number;
   progress: number;
+  totalChapters?: number;
+  updatedAt?: string;
 }

@@ -1,15 +1,14 @@
 import {
   TrendingHeader,
   FilterBar,
-  TrendingList,
-  TrendingSidebar,
   StatisticsCard,
   GenreTrend,
   LoadMore,
-  trendingData,
   statistics,
   genreTrends,
 } from "./components";
+import TrendingListContainer from "./components/TrendingListContainer";
+import TrendingSidebarContainer from "./components/TrendingSidebarContainer";
 
 export default function Trending() {
   return (
@@ -24,14 +23,14 @@ export default function Trending() {
       <section className="grid min-w-0 gap-8 xl:grid-cols-[minmax(0,1fr)_340px]">
         {/* Left Side */}
         <div className="space-y-8">
-          <TrendingList items={trendingData} />
+          <TrendingListContainer />
 
           <LoadMore />
         </div>
 
         {/* Right Side */}
         <div className="space-y-6">
-          <TrendingSidebar hero={trendingData[0]} items={trendingData} />
+          <TrendingSidebarContainer />
 
           {/* Statistics */}
           <div className="space-y-4">

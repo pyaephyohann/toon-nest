@@ -19,7 +19,7 @@ export default function GenreCard({ genre }: Props) {
     >
       <div className="relative h-52 overflow-hidden">
         <Image
-          src={genre.cover}
+          src={genre.cover || "/banners/the-beginning-after-the-end.jpeg"}
           alt={genre.name}
           fill
           className="object-cover transition duration-500 group-hover:scale-110"
@@ -43,11 +43,11 @@ export default function GenreCard({ genre }: Props) {
         </div>
 
         <p className="text-sm text-muted-foreground">
-          {genre.seriesCount.toLocaleString()} Series
+          {(genre.seriesCount || 0).toLocaleString()} Series
         </p>
 
         <ProgressBar
-          progress={Math.min(genre.seriesCount / 25, 100)}
+          progress={Math.min((genre.seriesCount || 0) / 25, 100)}
           showLabel={false}
           size="md"
           customColor={genre.color}

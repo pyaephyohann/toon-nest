@@ -1,16 +1,15 @@
 import { BaseManga } from "@/types/manga";
 
 export interface Genre {
-  id: number;
+  id: string;
   name: string;
   slug: string;
-  icon: string;
-
-  cover: string;
-
-  seriesCount: number;
-
-  color: string;
+  icon?: string;
+  color?: string;
+  cover?: string;
+  seriesCount?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface TrendingGenre {

@@ -1,5 +1,4 @@
-import { genres } from "./components/data";
-import GenreGrid from "./components/GenreGrid";
+import GenreGridContainer from "./components/GenreGridContainer";
 import GenreSearch from "./components/GenreSearch";
 import GenresHeader from "./components/GenresHeader";
 import GenreSidebar from "./components/GenreSidebar";
@@ -26,7 +25,7 @@ export default function GenresPage() {
       <section className="grid gap-8 xl:grid-cols-[1fr_340px]">
         {/* Left */}
         <div className="space-y-8">
-          <GenreGrid genres={genres} />
+          <GenreGridContainer />
 
           <ViewAllGenres />
         </div>

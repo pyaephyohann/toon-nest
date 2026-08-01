@@ -2,11 +2,11 @@ import {
   FilterBar,
   PopularHeader,
   PopularSidebar,
-  rankings,
   RankingSection,
-  topThree,
   TopThreeSection,
 } from "./components";
+import TopThreeContainer from "./components/TopThreeContainer";
+import RankingContainer from "./components/RankingContainer";
 
 export default function PopularPage() {
   return (
@@ -21,12 +21,12 @@ export default function PopularPage() {
 
       {/* Top 3 */}
 
-      <TopThreeSection items={topThree} />
+      <TopThreeContainer />
 
       {/* Content */}
 
       <section className="grid gap-8 xl:grid-cols-[1fr_340px]">
-        <RankingSection items={rankings} />
+        <RankingContainer />
 
         <PopularSidebar />
       </section>

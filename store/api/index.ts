@@ -4,16 +4,16 @@
  */
 
 export { baseApi } from "./baseApi";
-export { authApi } from "./authApi";
-export { mangaApi } from "./mangaApi";
-export { chapterApi } from "./chapterApi";
-export { userApi } from "./userApi";
-export { genreApi } from "./genreApi";
-export { bookmarkApi } from "./bookmarkApi";
-export { historyApi } from "./historyApi";
-export { commentApi } from "./commentApi";
-export { ratingApi } from "./ratingApi";
-export { subscriptionApi } from "./subscriptionApi";
+export { authApi, useLoginMutation, useRegisterMutation, useLogoutMutation, useMeQuery } from "./authApi";
+export { mangaApi, useGetMangaListQuery, useGetMangaByIdQuery, useCreateMangaMutation, useUpdateMangaMutation, useDeleteMangaMutation, useGetMangaChaptersQuery, useGetMangaRatingsQuery } from "./mangaApi";
+export { chapterApi, useGetChapterByIdQuery, useCreateChapterMutation, useUpdateChapterMutation, useDeleteChapterMutation, useGetChapterCommentsQuery, useUnlockChapterMutation } from "./chapterApi";
+export { userApi, useGetUserByIdQuery, useUpdateUserMutation, useDeleteUserMutation, useChangePasswordMutation } from "./userApi";
+export { genreApi, useGetGenresQuery, useGetGenreByIdQuery, useCreateGenreMutation, useUpdateGenreMutation, useDeleteGenreMutation } from "./genreApi";
+export { bookmarkApi, useGetBookmarksQuery, useAddBookmarkMutation, useToggleBookmarkMutation, useDeleteBookmarkMutation } from "./bookmarkApi";
+export { historyApi, useGetHistoryQuery, useSaveHistoryMutation, useClearHistoryMutation, useDeleteHistoryEntryMutation } from "./historyApi";
+export { commentApi, useGetCommentByIdQuery, useAddCommentMutation, useUpdateCommentMutation, useDeleteCommentMutation } from "./commentApi";
+export { ratingApi, useAddRatingMutation, useDeleteRatingMutation } from "./ratingApi";
+export { subscriptionApi, useGetSubscriptionsQuery, useCreateSubscriptionMutation, useCancelSubscriptionMutation } from "./subscriptionApi";
 
 // Re-export types with unique names to avoid conflicts
 export type { User as AuthUser, LoginRequest, RegisterRequest } from "./authApi";

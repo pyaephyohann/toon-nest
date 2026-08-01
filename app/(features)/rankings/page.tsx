@@ -1,8 +1,8 @@
 import RankingsHeader from "./components/RankingsHeader";
 import RankingTabs from "./components/RankingTabs";
 import RankingFilters from "./components/RankingFilters";
-import TopThreePodium from "./components/TopThreePodium";
-import RankingTable from "./components/RankingTable";
+import TopThreePodiumContainer from "./components/TopThreePodiumContainer";
+import RankingTableContainer from "./components/RankingTableContainer";
 import TrendingSidebar from "./components/TrendingSidebar";
 import TopGainers from "./components/TopGainers";
 import GenreRanking from "./components/GenreRanking";
@@ -17,13 +17,13 @@ export default function Rankings() {
 
       <RankingFilters />
 
-      <TopThreePodium />
+      <TopThreePodiumContainer />
 
       <section className="grid gap-8 xl:grid-cols-[1fr_330px]">
         {/* Left */}
 
         <div className="space-y-8">
-          <RankingTable />
+          <RankingTableContainer />
 
           <HallOfFame />
         </div>

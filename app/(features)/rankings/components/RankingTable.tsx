@@ -1,12 +1,16 @@
 "use client";
 
-import { rankingData } from "./data";
 import RankingRow from "./RankingRow";
+import { RankingManga } from "./types";
 
-export default function RankingTable() {
+interface Props {
+  items: RankingManga[];
+}
+
+export default function RankingTable({ items }: Props) {
   return (
     <section className="overflow-hidden rounded-3xl border border-border bg-card">
-      {rankingData.map((manga) => (
+      {items.map((manga) => (
         <RankingRow key={manga.id} manga={manga} />
       ))}
     </section>

@@ -7,4 +7,7 @@ export interface RankingSeries {
   genres: string[];
   rating: number;
   badge?: string;
+  totalChapters?: number;
+  views?: number;
+  readersCount?: number;
 }

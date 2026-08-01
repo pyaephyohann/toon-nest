@@ -1,17 +1,15 @@
 import HeroCarousel from "./components/HeroCarousel";
 import { genres } from "./(genres)/data";
 import GenreSection from "./(genres)/GenreSection";
-import { continueReadingData } from "./(series)/continue-reading/data";
-import ContinueReadingSection from "./(series)/continue-reading/ContinueReadingSection";
-import { popularWeek } from "./(series)/ranking/data";
-import RankingSection from "./(series)/ranking/RankingSection";
+import ContinueReadingContainer from "./(series)/continue-reading/ContinueReadingContainer";
+import RankingContainer from "./(series)/ranking/RankingContainer";
 
 const Home = () => {
   return (
     <div className="space-y-10">
       <HeroCarousel />
-      <ContinueReadingSection items={continueReadingData} />
-      <RankingSection title="Popular This Week" items={popularWeek} />
+      <ContinueReadingContainer />
+      <RankingContainer title="Popular This Week" />
       <GenreSection title="Genres" items={genres} />
     </div>
   );

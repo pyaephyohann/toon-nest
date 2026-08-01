@@ -2,7 +2,7 @@ import { Genre, TrendingGenre, GenreSeries } from "./types";
 
 export const genres: Genre[] = [
   {
-    id: 1,
+    id: "1",
     name: "Action",
     slug: "action",
     icon: "⚔️",
@@ -11,7 +11,7 @@ export const genres: Genre[] = [
     color: "var(--genre-action)",
   },
   {
-    id: 2,
+    id: "2",
     name: "Fantasy",
     slug: "fantasy",
     icon: "✨",
@@ -20,7 +20,7 @@ export const genres: Genre[] = [
     color: "var(--genre-fantasy)",
   },
   {
-    id: 3,
+    id: "3",
     name: "Romance",
     slug: "romance",
     icon: "💜",
@@ -29,7 +29,7 @@ export const genres: Genre[] = [
     color: "var(--genre-romance)",
   },
   {
-    id: 4,
+    id: "4",
     name: "Adventure",
     slug: "adventure",
     icon: "🧭",
@@ -38,7 +38,7 @@ export const genres: Genre[] = [
     color: "var(--genre-adventure)",
   },
   {
-    id: 5,
+    id: "5",
     name: "Comedy",
     slug: "comedy",
     icon: "😂",
@@ -47,7 +47,7 @@ export const genres: Genre[] = [
     color: "var(--genre-comedy)",
   },
   {
-    id: 6,
+    id: "6",
     name: "School",
     slug: "school",
     icon: "🎓",
