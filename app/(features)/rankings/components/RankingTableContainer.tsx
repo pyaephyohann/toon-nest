@@ -4,8 +4,28 @@ import { useGetMangaListQuery } from "@/store/api";
 import { RankingManga } from "./types";
 import RankingTable from "./RankingTable";
 
-export default function RankingTableContainer() {
-  const { data, isLoading, error, isError } = useGetMangaListQuery({ limit: 10 });
+interface Props {
+  timePeriod?: "daily" | "weekly" | "monthly" | "all";
+  orderByField?: string;
+  orderByDirection?: string;
+  page?: number;
+  onPageChange?: (page: number) => void;
+}
+
+export default function RankingTableContainer({ 
+  timePeriod = "all",
+  orderByField = "views",
+  orderByDirection = "desc",
+  page = 1,
+  onPageChange
+}: Props) {
+  const { data, isLoading, error, isError } = useGetMangaListQuery({ 
+    limit: 10,
+    page,
+    timePeriod,
+    orderByField,
+    orderByDirection
+  });
 
   // Loading state
   if (isLoading) {
@@ -48,7 +68,7 @@ export default function RankingTableContainer() {
   // Transform API data to match UI expectations
   const items: RankingManga[] = data.items.map((manga: any, index: number) => ({
     ...manga,
-    rank: index + 1,
+    rank: index + 1 + ((page - 1) * 10),
     author: manga.author || "Unknown",
     readers: formatNumber(manga.readersCount || 0),
     chapters: manga.totalChapters || 0,
@@ -57,7 +77,34 @@ export default function RankingTableContainer() {
     verified: manga.verified || false,
   }));
 
-  return <RankingTable items={items} />;
+  const totalPages = Math.ceil(data.total / data.limit);
+
+  return (
+    <div className="space-y-4">
+      <RankingTable items={items} />
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2">
+          <button
+            onClick={() => onPageChange?.(page - 1)}
+            disabled={page === 1}
+            className="rounded-lg border border-border bg-background px-4 py-2 text-sm disabled:opacity-50 hover:border-primary hover:bg-accent"
+          >
+            Previous
+          </button>
+          <span className="text-sm text-muted-foreground">
+            Page {page} of {totalPages}
+          </span>
+          <button
+            onClick={() => onPageChange?.(page + 1)}
+            disabled={page === totalPages}
+            className="rounded-lg border border-border bg-background px-4 py-2 text-sm disabled:opacity-50 hover:border-primary hover:bg-accent"
+          >
+            Next
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function formatNumber(num: number): string {

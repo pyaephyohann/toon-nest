@@ -23,6 +23,7 @@ export async function GET(request: NextRequest) {
     const genreId = searchParams.get("genreId") || undefined;
     const search = searchParams.get("search") || undefined;
     const year = searchParams.get("year") ? parseInt(searchParams.get("year")!) : undefined;
+    const timePeriod = (searchParams.get("timePeriod") as "daily" | "weekly" | "monthly" | "all") || undefined;
     const orderByField = (searchParams.get("orderByField") as any) || undefined;
     const orderByDirection = (searchParams.get("orderByDirection") as any) || undefined;
 
@@ -33,6 +34,7 @@ export async function GET(request: NextRequest) {
       genreId,
       search,
       year,
+      timePeriod,
       orderBy: orderByField && orderByDirection ? {
         field: orderByField,
         direction: orderByDirection,

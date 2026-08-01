@@ -59,12 +59,13 @@ export class SeriesRepository {
     genreId?: string;
     search?: string;
     year?: number;
+    timePeriod?: "daily" | "weekly" | "monthly" | "all";
     orderBy?: {
-      field: "views" | "averageRating" | "readersCount" | "createdAt" | "updatedAt";
+      field: "views" | "averageRating" | "readersCount" | "createdAt" | "updatedAt" | "bookmarksCount";
       direction: "asc" | "desc";
     };
   }): Promise<{ series: Series[]; total: number }> {
-    const { skip = 0, take = 20, status, genreId, search, year, orderBy } = options;
+    const { skip = 0, take = 20, status, genreId, search, year, timePeriod, orderBy } = options;
 
     const where: any = {};
 
@@ -98,6 +99,30 @@ export class SeriesRepository {
       };
     }
 
+    // Time period filtering
+    if (timePeriod && timePeriod !== "all") {
+      const now = new Date();
+      let startDate: Date;
+
+      switch (timePeriod) {
+        case "daily":
+          startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+          break;
+        case "weekly":
+          startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          break;
+        case "monthly":
+          startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+          break;
+        default:
+          startDate = new Date(0);
+      }
+
+      where.createdAt = {
+        gte: startDate,
+      };
+    }
+
     const [series, total] = await Promise.all([
       prisma.series.findMany({
         where,
@@ -113,6 +138,11 @@ export class SeriesRepository {
           tags: {
             include: {
               tag: true,
+            },
+          },
+          _count: {
+            select: {
+              bookmarks: true,
             },
           },
         },

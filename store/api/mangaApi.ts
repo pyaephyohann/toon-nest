@@ -58,7 +58,7 @@ export interface CreateMangaRequest {
 
 export const mangaApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getMangaList: builder.query<MangaListResponse, { page?: number; limit?: number; status?: string; genreId?: string; search?: string; year?: number; orderByField?: string; orderByDirection?: string }>({
+    getMangaList: builder.query<MangaListResponse, { page?: number; limit?: number; status?: string; genreId?: string; search?: string; year?: number; timePeriod?: "daily" | "weekly" | "monthly" | "all"; orderByField?: string; orderByDirection?: string }>({
       query: (params) => ({
         url: "/manga",
         method: "GET",

@@ -4,8 +4,23 @@ import { useGetMangaListQuery } from "@/store/api";
 import { PodiumItem } from "./types";
 import TopThreePodium from "./TopThreePodium";
 
-export default function TopThreePodiumContainer() {
-  const { data, isLoading, error, isError } = useGetMangaListQuery({ limit: 3 });
+interface Props {
+  timePeriod?: "daily" | "weekly" | "monthly" | "all";
+  orderByField?: string;
+  orderByDirection?: string;
+}
+
+export default function TopThreePodiumContainer({ 
+  timePeriod = "all",
+  orderByField = "views",
+  orderByDirection = "desc"
+}: Props) {
+  const { data, isLoading, error, isError } = useGetMangaListQuery({ 
+    limit: 3,
+    timePeriod,
+    orderByField,
+    orderByDirection
+  });
 
   // Loading state
   if (isLoading) {

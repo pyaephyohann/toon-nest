@@ -39,8 +39,9 @@ export class SeriesService {
     genreId?: string;
     search?: string;
     year?: number;
+    timePeriod?: "daily" | "weekly" | "monthly" | "all";
     orderBy?: {
-      field: "views" | "averageRating" | "readersCount" | "createdAt" | "updatedAt";
+      field: "views" | "averageRating" | "readersCount" | "createdAt" | "updatedAt" | "bookmarksCount";
       direction: "asc" | "desc";
     };
   }) {
