@@ -11,7 +11,7 @@ export { userApi, useGetUserByIdQuery, useUpdateUserMutation, useDeleteUserMutat
 export { genreApi, useGetGenresQuery, useGetGenreByIdQuery, useCreateGenreMutation, useUpdateGenreMutation, useDeleteGenreMutation } from "./genreApi";
 export { bookmarkApi, useGetBookmarksQuery, useAddBookmarkMutation, useToggleBookmarkMutation, useDeleteBookmarkMutation } from "./bookmarkApi";
 export { historyApi, useGetHistoryQuery, useSaveHistoryMutation, useClearHistoryMutation, useDeleteHistoryEntryMutation } from "./historyApi";
-export { commentApi, useGetCommentByIdQuery, useAddCommentMutation, useUpdateCommentMutation, useDeleteCommentMutation } from "./commentApi";
+export { commentApi, useGetCommentsByChapterIdQuery, useGetCommentByIdQuery, useAddCommentMutation, useUpdateCommentMutation, useDeleteCommentMutation } from "./commentApi";
 export { ratingApi, useAddRatingMutation, useDeleteRatingMutation } from "./ratingApi";
 export { subscriptionApi, useGetSubscriptionsQuery, useCreateSubscriptionMutation, useCancelSubscriptionMutation } from "./subscriptionApi";
 

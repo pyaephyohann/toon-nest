@@ -25,6 +25,16 @@ export interface CommentListResponse {
 
 export const commentApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    getCommentsByChapterId: builder.query<CommentListResponse, { chapterId: string; page?: number; limit?: number; sortBy?: string }>({
+      query: (params) => ({
+        url: "/comments",
+        method: "GET",
+        params,
+      }),
+      providesTags: (result, error, { chapterId }) => [
+        { type: tagTypes.COMMENT, id: chapterId },
+      ],
+    }),
     getCommentById: builder.query<Comment, string>({
       query: (id) => ({
         url: `/comments/${id}`,
@@ -65,6 +75,7 @@ export const commentApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useGetCommentsByChapterIdQuery,
   useGetCommentByIdQuery,
   useAddCommentMutation,
   useUpdateCommentMutation,

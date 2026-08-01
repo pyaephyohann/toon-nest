@@ -1,6 +1,7 @@
 /**
+ * GET /api/comments
  * POST /api/comments
- * Create comment endpoint
+ * Comment endpoints
  */
 
 import { NextRequest } from "next/server";
@@ -8,6 +9,39 @@ import { auth } from "@/auth";
 import { successResponse, handleApiError, errorResponse, createdResponse } from "@/lib/api/index";
 import { HTTP_STATUS, ERROR_CODES } from "@/lib/api/index";
 import { commentService } from "@/services";
+
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const chapterId = searchParams.get("chapterId");
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
+    const sortBy = searchParams.get("sortBy") || "newest";
+
+    if (!chapterId) {
+      return errorResponse(
+        ERROR_CODES.VALIDATION_ERROR,
+        "ChapterId is required",
+        HTTP_STATUS.BAD_REQUEST
+      );
+    }
+
+    const { comments, total } = await commentService.getCommentsByChapter(
+      chapterId,
+      {
+        skip: (page - 1) * limit,
+        take: limit,
+      }
+    );
+
+    return successResponse(
+      { items: comments, total, page, limit },
+      "Comments retrieved successfully"
+    );
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {

@@ -6,6 +6,7 @@ import { useGetChaptersBySeriesIdQuery } from "@/store/api";
 import { useSaveHistoryMutation } from "@/store/api";
 import { ChevronLeft, ChevronRight, BookOpen, Lock } from "lucide-react";
 import Link from "next/link";
+import CommentsSection from "./CommentsSection";
 
 interface Props {
   seriesSlug: string;
@@ -149,6 +150,11 @@ export default function Reader({ seriesSlug, chapterNumber }: Props) {
           )}
         </div>
       </main>
+
+      {/* Comments Section */}
+      <section className="container-width mx-auto max-w-4xl px-4 py-8">
+        <CommentsSection chapterId={currentChapter?.id || ""} />
+      </section>
 
       {/* Navigation */}
       <footer className="sticky bottom-0 border-t border-border bg-background/95 backdrop-blur">
