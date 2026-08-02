@@ -21,3 +21,4 @@ export { collectionService, CollectionService } from "./collection.service";
 export { editorPickService, EditorPickService } from "./editor-pick.service";
 export { subscriptionService, SubscriptionService } from "./subscription.service";
 export { chapterUnlockService, ChapterUnlockService } from "./chapter-unlock.service";
+export { notificationService, NotificationService } from "./notification.service";

@@ -4,7 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Bell, Crown, Search } from "lucide-react";
+import { Crown, Search } from "lucide-react";
+import NotificationCenter from "./ui/NotificationCenter";
 
 const links = [
   { label: "Home", href: "/" },
@@ -131,9 +132,7 @@ export default function Navbar() {
             </button>
           </Link>
 
-          <button className="cursor-pointer rounded-xl border border-border p-2">
-            <Bell className="size-5" />
-          </button>
+          <NotificationCenter />
 
           <Link href="/profile">
             <Image

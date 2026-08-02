@@ -21,3 +21,4 @@ export { collectionRepository, CollectionRepository } from "./collection.reposit
 export { editorPickRepository, EditorPickRepository } from "./editor-pick.repository";
 export { subscriptionRepository, SubscriptionRepository } from "./subscription.repository";
 export { chapterUnlockRepository, ChapterUnlockRepository } from "./chapter-unlock.repository";
+export { notificationRepository, NotificationRepository } from "./notification.repository";

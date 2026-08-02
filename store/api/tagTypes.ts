@@ -31,6 +31,7 @@ export const tagTypes = {
   HISTORY_LIST: "HistoryList",
   COMMENT: "Comment",
   RATING: "Rating",
+  NOTIFICATION: "Notification",
 
   // Premium
   SUBSCRIPTION: "Subscription",

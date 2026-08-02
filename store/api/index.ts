@@ -13,6 +13,7 @@ export { bookmarkApi, useGetBookmarksQuery, useAddBookmarkMutation, useToggleBoo
 export { historyApi, useGetHistoryQuery, useSaveHistoryMutation, useClearHistoryMutation, useDeleteHistoryEntryMutation } from "./historyApi";
 export { commentApi, useGetCommentsByChapterIdQuery, useGetCommentByIdQuery, useAddCommentMutation, useUpdateCommentMutation, useDeleteCommentMutation } from "./commentApi";
 export { ratingApi, useGetRatingsBySeriesIdQuery, useGetRatingSummaryQuery, useAddRatingMutation, useUpdateRatingMutation, useDeleteRatingMutation } from "./ratingApi";
+export { notificationApi, useGetNotificationsQuery, useGetUnreadCountQuery, useMarkAsReadMutation, useMarkAllAsReadMutation, useDeleteNotificationMutation } from "./notificationApi";
 export { subscriptionApi, useGetSubscriptionsQuery, useCreateSubscriptionMutation, useCancelSubscriptionMutation } from "./subscriptionApi";
 
 // Re-export types with unique names to avoid conflicts
