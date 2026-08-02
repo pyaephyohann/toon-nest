@@ -7,7 +7,7 @@ export { baseApi } from "./baseApi";
 export { authApi, useLoginMutation, useRegisterMutation, useLogoutMutation, useMeQuery } from "./authApi";
 export { mangaApi, useGetMangaListQuery, useGetMangaByIdQuery, useCreateMangaMutation, useUpdateMangaMutation, useDeleteMangaMutation, useGetMangaChaptersQuery, useGetMangaRatingsQuery, useGetMangaSuggestionsQuery } from "./mangaApi";
 export { chapterApi, useGetChapterByIdQuery, useGetChaptersBySeriesIdQuery, useCreateChapterMutation, useUpdateChapterMutation, useDeleteChapterMutation, useGetChapterCommentsQuery, useUnlockChapterMutation } from "./chapterApi";
-export { userApi, useGetUserByIdQuery, useUpdateUserMutation, useDeleteUserMutation, useChangePasswordMutation } from "./userApi";
+export { userApi, useGetUserByIdQuery, useGetUserStatisticsQuery, useGetFavoriteGenresQuery, useUpdateUserMutation, useUploadAvatarMutation, useDeleteUserMutation, useChangePasswordMutation } from "./userApi";
 export { genreApi, useGetGenresQuery, useGetGenreByIdQuery, useCreateGenreMutation, useUpdateGenreMutation, useDeleteGenreMutation } from "./genreApi";
 export { bookmarkApi, useGetBookmarksQuery, useAddBookmarkMutation, useToggleBookmarkMutation, useDeleteBookmarkMutation } from "./bookmarkApi";
 export { historyApi, useGetHistoryQuery, useSaveHistoryMutation, useClearHistoryMutation, useDeleteHistoryEntryMutation } from "./historyApi";

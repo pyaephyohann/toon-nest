@@ -29,6 +29,8 @@ export class UserService {
     id: string,
     data: {
       username?: string;
+      displayName?: string;
+      bio?: string;
       avatar?: string;
     }
   ) {
@@ -46,6 +48,81 @@ export class UserService {
     }
 
     return userRepository.update(id, data);
+  }
+
+  /**
+   * Get user statistics
+   */
+  async getUserStatistics(userId: string) {
+    const stats = await userRepository.getUserStatistics(userId);
+    
+    // Calculate reading streak (consecutive days with reading activity)
+    const streak = await this.calculateReadingStreak(userId);
+    
+    return {
+      ...stats,
+      readingStreak: streak,
+    };
+  }
+
+  /**
+   * Get user's favorite genres
+   */
+  async getFavoriteGenres(userId: string, limit: number = 5) {
+    return userRepository.getFavoriteGenres(userId, limit);
+  }
+
+  /**
+   * Calculate reading streak (consecutive days of reading activity)
+   */
+  private async calculateReadingStreak(userId: string): Promise<number> {
+    const { readingHistoryRepository } = await import("@/repositories");
+    
+    // Get reading history entries sorted by date
+    const history = await readingHistoryRepository.findByUserId(userId, { take: 365 });
+    
+    if (history.histories.length === 0) {
+      return 0;
+    }
+
+    // Get unique dates from history
+    const dates = new Set(
+      history.histories.map((h) => {
+        const date = new Date(h.updatedAt);
+        return date.toISOString().split('T')[0]; // YYYY-MM-DD
+      })
+    );
+
+    const sortedDates = Array.from(dates).sort().reverse();
+    
+    // Calculate streak from today backwards
+    let streak = 0;
+    const today = new Date().toISOString().split('T')[0];
+    let currentDate = today;
+
+    for (const date of sortedDates) {
+      if (date === currentDate) {
+        streak++;
+        // Move to previous day
+        const prevDate = new Date(currentDate);
+        prevDate.setDate(prevDate.getDate() - 1);
+        currentDate = prevDate.toISOString().split('T')[0];
+      } else if (date < currentDate) {
+        // Gap found, check if it's just yesterday
+        const prevDate = new Date(currentDate);
+        prevDate.setDate(prevDate.getDate() - 1);
+        const yesterday = prevDate.toISOString().split('T')[0];
+        
+        if (date === yesterday) {
+          streak++;
+          currentDate = yesterday;
+        } else {
+          break;
+        }
+      }
+    }
+
+    return streak;
   }
 
   /**

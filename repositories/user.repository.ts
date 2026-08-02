@@ -92,6 +92,109 @@ export class UserRepository {
     const user = await this.findByUsername(username);
     return user !== null;
   }
+
+  /**
+   * Get user statistics
+   */
+  async getUserStatistics(userId: string) {
+    const [bookmarksCount, historyCount, ratingsCount, commentsCount] = await Promise.all([
+      prisma.bookmark.count({ where: { userId } }),
+      prisma.readingHistory.count({ where: { userId } }),
+      prisma.rating.count({ where: { userId } }),
+      prisma.comment.count({ where: { userId } }),
+    ]);
+
+    // Count unique manga read (from history)
+    const historyEntries = await prisma.readingHistory.findMany({
+      where: { userId },
+      include: {
+        chapter: {
+          select: {
+            seriesId: true,
+          },
+        },
+      },
+    });
+
+    const uniqueMangaRead = new Set(historyEntries.map((h) => h.chapter.seriesId)).size;
+
+    return {
+      bookmarksCount,
+      historyCount,
+      ratingsCount,
+      commentsCount,
+      uniqueMangaRead,
+      readingStreak: 0, // Will be calculated in service layer
+    };
+  }
+
+  /**
+   * Get user's favorite genres based on activity
+   */
+  async getFavoriteGenres(userId: string, limit: number = 5) {
+    // Get genres from bookmarked series
+    const bookmarkedSeries = await prisma.bookmark.findMany({
+      where: { userId },
+      include: {
+        series: {
+          include: {
+            genres: {
+              include: {
+                genre: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    // Get genres from reading history
+    const historyEntries = await prisma.readingHistory.findMany({
+      where: { userId },
+      include: {
+        chapter: {
+          include: {
+            series: {
+              include: {
+                genres: {
+                  include: {
+                    genre: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    // Aggregate genre counts
+    const genreCounts = new Map<string, number>();
+
+    // Weight bookmarks higher (2x)
+    bookmarkedSeries.forEach((bookmark) => {
+      bookmark.series.genres.forEach((sg) => {
+        const genreName = sg.genre.name;
+        genreCounts.set(genreName, (genreCounts.get(genreName) || 0) + 2);
+      });
+    });
+
+    // Weight reading history (1x)
+    historyEntries.forEach((history) => {
+      history.chapter.series.genres.forEach((sg) => {
+        const genreName = sg.genre.name;
+        genreCounts.set(genreName, (genreCounts.get(genreName) || 0) + 1);
+      });
+    });
+
+    // Sort by count and return top genres
+    const sortedGenres = Array.from(genreCounts.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, limit)
+      .map(([name, count]) => ({ name, count }));
+
+    return sortedGenres;
+  }
 }
 
 export const userRepository = new UserRepository();

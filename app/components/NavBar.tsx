@@ -135,13 +135,15 @@ export default function Navbar() {
             <Bell className="size-5" />
           </button>
 
-          <Image
-            src="/favicon.png"
-            alt="avatar"
-            width={40}
-            height={40}
-            className="rounded-full border border-border"
-          />
+          <Link href="/profile">
+            <Image
+              src="/favicon.png"
+              alt="avatar"
+              width={40}
+              height={40}
+              className="rounded-full border border-border cursor-pointer hover:border-primary transition"
+            />
+          </Link>
         </div>
       </div>
     </header>

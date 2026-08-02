@@ -10,13 +10,32 @@ export interface User {
   id: string;
   email: string;
   username: string;
+  displayName?: string | null;
+  bio?: string | null;
   role: string;
   avatar?: string | null;
+  readingStreak?: number;
 }
 
 export interface UpdateUserRequest {
   username?: string;
+  displayName?: string;
+  bio?: string;
   avatar?: string;
+}
+
+export interface UserStatistics {
+  bookmarksCount: number;
+  historyCount: number;
+  ratingsCount: number;
+  commentsCount: number;
+  uniqueMangaRead: number;
+  readingStreak: number;
+}
+
+export interface FavoriteGenre {
+  name: string;
+  count: number;
 }
 
 export interface ChangePasswordRequest {
@@ -33,11 +52,36 @@ export const userApi = baseApi.injectEndpoints({
       }),
       providesTags: (result) => result ? [{ type: tagTypes.USER, id: result.id }] : [],
     }),
+    getUserStatistics: builder.query<UserStatistics, string>({
+      query: (id) => ({
+        url: `/users/${id}/statistics`,
+        method: "GET",
+      }),
+      providesTags: (result, error, id) => [{ type: tagTypes.USER, id }],
+    }),
+    getFavoriteGenres: builder.query<FavoriteGenre[], { id: string; limit?: number }>({
+      query: ({ id, limit = 5 }) => ({
+        url: `/users/${id}/favorite-genres`,
+        method: "GET",
+        params: { limit },
+      }),
+      providesTags: (result, error, { id }) => [{ type: tagTypes.USER, id }],
+    }),
     updateUser: builder.mutation<User, { id: string; data: UpdateUserRequest }>({
       query: ({ id, data }) => ({
         url: `/users/${id}`,
         method: "PATCH",
         body: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: tagTypes.USER, id },
+      ],
+    }),
+    uploadAvatar: builder.mutation<User, { id: string; avatar: string }>({
+      query: ({ id, avatar }) => ({
+        url: `/users/${id}/avatar`,
+        method: "POST",
+        body: { avatar },
       }),
       invalidatesTags: (result, error, { id }) => [
         { type: tagTypes.USER, id },
@@ -65,7 +109,10 @@ export const userApi = baseApi.injectEndpoints({
 
 export const {
   useGetUserByIdQuery,
+  useGetUserStatisticsQuery,
+  useGetFavoriteGenresQuery,
   useUpdateUserMutation,
+  useUploadAvatarMutation,
   useDeleteUserMutation,
   useChangePasswordMutation,
 } = userApi;
