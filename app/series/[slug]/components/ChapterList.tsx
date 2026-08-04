@@ -4,6 +4,7 @@ import { useGetMangaByIdQuery } from "@/store/api";
 import { useGetChaptersBySeriesIdQuery } from "@/store/api";
 import { Chapter } from "@/store/api";
 import RatingsSection from "./RatingsSection";
+import PremiumBadge from "../../../components/ui/PremiumBadge";
 
 interface Props {
   seriesId: string;
@@ -91,6 +92,7 @@ export default function ChapterList({ seriesId }: Props) {
 
 function ChapterRow({ chapter, seriesSlug }: { chapter: Chapter; seriesSlug: string }) {
   const chapterNumber = parseFloat(chapter.chapterNumber.toString());
+  const isPremium = chapter.unlockType === "PREMIUM";
   const isLocked = chapter.unlockType !== "FREE";
 
   return (
@@ -112,11 +114,8 @@ function ChapterRow({ chapter, seriesSlug }: { chapter: Chapter; seriesSlug: str
         </div>
       </div>
       <div className="flex items-center gap-4">
-        {isLocked && (
-          <span className="rounded-full bg-yellow-500/10 px-3 py-1 text-xs font-semibold text-yellow-600">
-            {chapter.unlockType}
-          </span>
-        )}
+        {isPremium && <PremiumBadge type="premium" size="sm" />}
+        {isLocked && !isPremium && <PremiumBadge type="locked" size="sm" />}
         <span className="text-sm text-muted-foreground">{chapter.views} views</span>
       </div>
     </a>

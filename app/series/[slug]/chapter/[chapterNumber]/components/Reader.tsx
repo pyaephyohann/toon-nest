@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useGetChapterByIdQuery } from "@/store/api";
 import { useGetChaptersBySeriesIdQuery } from "@/store/api";
 import { useSaveHistoryMutation } from "@/store/api";
-import { ChevronLeft, ChevronRight, BookOpen, Lock } from "lucide-react";
+import { ChevronLeft, ChevronRight, BookOpen, Lock, Crown, Check } from "lucide-react";
 import Link from "next/link";
 import CommentsSection from "./CommentsSection";
 
@@ -86,18 +86,54 @@ export default function Reader({ seriesSlug, chapterNumber }: Props) {
 
   // Locked chapter
   if (chapter.access && !chapter.access.canAccess) {
+    const premiumFeatures = [
+      "Unlimited manga access",
+      "High-quality images",
+      "Early chapter releases",
+      "Ad-free experience",
+      "Offline reading",
+      "Bookmark sync",
+    ];
+
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <Lock className="mx-auto h-12 w-12 text-muted-foreground" />
-          <h2 className="mt-4 text-2xl font-bold">Chapter Locked</h2>
-          <p className="mt-2 text-muted-foreground">{chapter.access.reason}</p>
-          <Link
-            href={`/series/${seriesSlug}`}
-            className="mt-4 inline-block rounded-lg bg-primary px-4 py-2 text-primary-foreground"
-          >
-            Back to Series
-          </Link>
+      <div className="flex flex-col items-center justify-center min-h-screen py-12 px-4">
+        <div className="text-center max-w-2xl">
+          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-muted">
+            <Lock className="h-10 w-10 text-muted-foreground" />
+          </div>
+          <h2 className="text-3xl font-bold mb-2">Premium Chapter</h2>
+          <p className="text-muted-foreground mb-8">
+            This chapter requires a premium subscription to read
+          </p>
+          <div className="bg-card border border-border rounded-2xl p-6 mb-8">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <Crown className="h-5 w-5 text-primary" />
+              <h3 className="font-semibold">Premium Benefits</h3>
+            </div>
+            <ul className="space-y-3 text-left">
+              {premiumFeatures.map((feature, index) => (
+                <li key={index} className="flex items-start gap-2">
+                  <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                  <span className="text-sm">{feature}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              href="/premium"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 font-medium text-primary-foreground hover:bg-primary/90 transition"
+            >
+              <Crown className="h-5 w-5" />
+              Upgrade to Premium
+            </Link>
+            <Link
+              href={`/series/${seriesSlug}`}
+              className="inline-flex items-center justify-center rounded-xl border border-border px-6 py-3 font-medium hover:bg-accent transition"
+            >
+              Back to Series
+            </Link>
+          </div>
         </div>
       </div>
     );

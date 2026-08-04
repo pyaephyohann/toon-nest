@@ -7,6 +7,7 @@ import { chapterRepository, seriesRepository } from "@/repositories";
 import { UnlockType } from "@/app/generated/prisma/client";
 import { subscriptionService } from "./subscription.service";
 import { chapterUnlockService } from "./chapter-unlock.service";
+import { canAccessChapter, getChapterAccessStatus } from "@/lib/access-control";
 
 export class ChapterService {
   /**
@@ -161,35 +162,16 @@ export class ChapterService {
       throw new Error("Chapter not found");
     }
 
-    // Free chapters are accessible to all
-    if (chapter.unlockType === UnlockType.FREE) {
-      return { canAccess: true };
-    }
+    const canAccess = await canAccessChapter(userId, chapter);
 
-    // Premium and AD chapters require authentication
-    if (!userId) {
-      return { canAccess: false, reason: "Authentication required" };
-    }
-
-    // Check premium subscription for premium chapters
-    if (chapter.unlockType === UnlockType.PREMIUM) {
-      const isPremium = await subscriptionService.isUserPremium(userId);
-      if (!isPremium) {
-        return { canAccess: false, reason: "Premium subscription required" };
+    if (!canAccess) {
+      if (!userId) {
+        return { canAccess: false, reason: "Authentication required" };
       }
-      return { canAccess: true };
+      return { canAccess: false, reason: "Premium subscription required" };
     }
 
-    // Check unlock record for AD chapters
-    if (chapter.unlockType === UnlockType.AD) {
-      const isUnlocked = await chapterUnlockService.checkUnlock(userId, chapterId);
-      if (!isUnlocked) {
-        return { canAccess: false, reason: "Chapter not unlocked" };
-      }
-      return { canAccess: true };
-    }
-
-    return { canAccess: false, reason: "Unknown unlock type" };
+    return { canAccess: true };
   }
 
   /**
@@ -201,11 +183,13 @@ export class ChapterService {
       throw new Error("Chapter not found");
     }
 
+    const accessStatus = await getChapterAccessStatus(userId, chapter);
     const accessInfo = await this.canUserAccessChapter(chapterId, userId);
 
     return {
       ...chapter,
       access: accessInfo,
+      accessStatus,
     };
   }
 

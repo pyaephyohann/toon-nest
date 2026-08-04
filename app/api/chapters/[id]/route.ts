@@ -10,6 +10,7 @@ import { auth } from "@/auth";
 import { successResponse, handleApiError, errorResponse } from "@/lib/api/index";
 import { HTTP_STATUS, ERROR_CODES } from "@/lib/api/index";
 import { chapterService } from "@/services";
+import { checkPremiumAccess } from "@/lib/access-control";
 
 interface RouteContext {
   params: Promise<{ id: string }>;
@@ -22,6 +23,15 @@ export async function GET(request: NextRequest, context: RouteContext) {
     const userId = session?.user?.id || null;
 
     const chapter = await chapterService.getChapterWithAccessInfo(id, userId);
+
+    // Check access for premium chapters
+    if (chapter.unlockType === "PREMIUM" && !chapter.access.canAccess) {
+      return errorResponse(
+        ERROR_CODES.PERMISSION_DENIED,
+        "This chapter requires a premium subscription",
+        HTTP_STATUS.FORBIDDEN
+      );
+    }
 
     return successResponse(chapter, "Chapter retrieved successfully");
   } catch (error) {
