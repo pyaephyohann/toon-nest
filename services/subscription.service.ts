@@ -97,6 +97,77 @@ export class SubscriptionService {
   }
 
   /**
+   * Get all available plans
+   */
+  async getAvailablePlans() {
+    return subscriptionRepository.getAllPlanDetails();
+  }
+
+  /**
+   * Get plan details by plan type
+   */
+  async getPlanDetails(plan: SubscriptionPlan) {
+    return subscriptionRepository.getPlanDetailsByPlan(plan);
+  }
+
+  /**
+   * Seed default plans if they don't exist
+   */
+  async seedDefaultPlans() {
+    const plans = [
+      {
+        plan: SubscriptionPlan.FREE,
+        name: "Free",
+        description: "Basic access to manga library",
+        price: 0,
+        currency: "USD",
+        features: [
+          "Access to free manga",
+          "Standard quality images",
+          "Limited chapter access",
+          "Advertisements",
+        ],
+        isPopular: false,
+      },
+      {
+        plan: SubscriptionPlan.MONTHLY,
+        name: "Premium Monthly",
+        description: "Full premium access billed monthly",
+        price: 9.99,
+        currency: "USD",
+        features: [
+          "Unlimited manga access",
+          "High-quality images",
+          "Early chapter releases",
+          "Ad-free experience",
+          "Offline reading",
+          "Bookmark sync",
+        ],
+        isPopular: true,
+      },
+      {
+        plan: SubscriptionPlan.YEARLY,
+        name: "Premium Yearly",
+        description: "Full premium access billed yearly (save 20%)",
+        price: 95.88,
+        currency: "USD",
+        features: [
+          "All Monthly features",
+          "Save 20% compared to monthly",
+          "Priority support",
+          "Exclusive content",
+          "Beta features access",
+        ],
+        isPopular: false,
+      },
+    ];
+
+    for (const planData of plans) {
+      await subscriptionRepository.upsertPlanDetails(planData.plan, planData);
+    }
+  }
+
+  /**
    * Calculate expiry date based on plan and duration
    */
   private calculateExpiryDate(
@@ -107,6 +178,10 @@ export class SubscriptionService {
     const expiryDate = new Date(fromDate);
 
     switch (plan) {
+      case SubscriptionPlan.FREE:
+        // Free plans don't expire
+        expiryDate.setFullYear(expiryDate.getFullYear() + 100);
+        break;
       case SubscriptionPlan.MONTHLY:
         expiryDate.setMonth(expiryDate.getMonth() + duration);
         break;

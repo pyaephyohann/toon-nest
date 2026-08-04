@@ -33,6 +33,7 @@ enum ReadingStatus {
 }
 
 enum SubscriptionPlan {
+  FREE
   MONTHLY
   YEARLY
   LIFETIME
@@ -394,6 +395,21 @@ model EditorPick {
 }
 
 // Monetization Models
+model SubscriptionPlanDetails {
+  id             String @id @default(cuid())
+  plan           SubscriptionPlan @unique
+  name           String
+  description    String @db.Text
+  price          Decimal @db.Decimal(10, 2)
+  currency       String @default("USD")
+  features       Json
+  isPopular      Boolean @default(false)
+  stripePriceId  String?
+  stripeProductId String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
 model Subscription {
   id        String @id @default(cuid())
   userId    String

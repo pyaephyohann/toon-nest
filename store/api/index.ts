@@ -14,7 +14,7 @@ export { historyApi, useGetHistoryQuery, useSaveHistoryMutation, useClearHistory
 export { commentApi, useGetCommentsByChapterIdQuery, useGetCommentByIdQuery, useAddCommentMutation, useUpdateCommentMutation, useDeleteCommentMutation } from "./commentApi";
 export { ratingApi, useGetRatingsBySeriesIdQuery, useGetRatingSummaryQuery, useAddRatingMutation, useUpdateRatingMutation, useDeleteRatingMutation } from "./ratingApi";
 export { notificationApi, useGetNotificationsQuery, useGetUnreadCountQuery, useMarkAsReadMutation, useMarkAllAsReadMutation, useDeleteNotificationMutation } from "./notificationApi";
-export { subscriptionApi, useGetSubscriptionsQuery, useCreateSubscriptionMutation, useCancelSubscriptionMutation } from "./subscriptionApi";
+export { subscriptionApi, useGetPlansQuery, useGetSubscriptionsQuery, useCreateSubscriptionMutation, useCancelSubscriptionMutation } from "./subscriptionApi";
 
 // Re-export types with unique names to avoid conflicts
 export type { User as AuthUser, LoginRequest, RegisterRequest } from "./authApi";
@@ -25,5 +25,5 @@ export type { Genre, GenreListResponse } from "./genreApi";
 export type { Bookmark, BookmarkListResponse } from "./bookmarkApi";
 export type { History, HistoryListResponse } from "./historyApi";
 export type { Comment, CommentListResponse } from "./commentApi";
-export type { Rating } from "./ratingApi";
-export type { Subscription } from "./subscriptionApi";
+export type { Rating, RatingSummary } from "./ratingApi";
+export type { Subscription, PlanDetails } from "./subscriptionApi";

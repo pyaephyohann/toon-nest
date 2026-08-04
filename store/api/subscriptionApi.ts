@@ -16,8 +16,30 @@ export interface Subscription {
   updatedAt: string;
 }
 
+export interface PlanDetails {
+  id: string;
+  plan: string;
+  name: string;
+  description: string;
+  price: number;
+  currency: string;
+  features: any[];
+  isPopular: boolean;
+  stripePriceId?: string | null;
+  stripeProductId?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export const subscriptionApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    getPlans: builder.query<PlanDetails[], void>({
+      query: () => ({
+        url: "/premium/plans",
+        method: "GET",
+      }),
+      providesTags: [tagTypes.SUBSCRIPTION_LIST],
+    }),
     getSubscriptions: builder.query<Subscription[], void>({
       query: () => ({
         url: "/premium/subscriptions",
@@ -44,6 +66,7 @@ export const subscriptionApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useGetPlansQuery,
   useGetSubscriptionsQuery,
   useCreateSubscriptionMutation,
   useCancelSubscriptionMutation,

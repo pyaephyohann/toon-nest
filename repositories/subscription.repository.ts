@@ -4,7 +4,7 @@
  */
 
 import prisma from "@/lib/prisma";
-import { Subscription, SubscriptionPlan } from "@/app/generated/prisma/client";
+import { Subscription, SubscriptionPlan, SubscriptionPlanDetails } from "@/app/generated/prisma/client";
 
 export class SubscriptionRepository {
   /**
@@ -126,6 +126,52 @@ export class SubscriptionRepository {
       orderBy: {
         expiresAt: "asc",
       },
+    });
+  }
+
+  /**
+   * Get all plan details
+   */
+  async getAllPlanDetails(): Promise<SubscriptionPlanDetails[]> {
+    return prisma.subscriptionPlanDetails.findMany({
+      orderBy: {
+        price: "asc",
+      },
+    });
+  }
+
+  /**
+   * Get plan details by plan type
+   */
+  async getPlanDetailsByPlan(plan: SubscriptionPlan): Promise<SubscriptionPlanDetails | null> {
+    return prisma.subscriptionPlanDetails.findUnique({
+      where: { plan },
+    });
+  }
+
+  /**
+   * Create or update plan details
+   */
+  async upsertPlanDetails(
+    plan: SubscriptionPlan,
+    data: {
+      name: string;
+      description: string;
+      price: number;
+      currency?: string;
+      features: any[];
+      isPopular?: boolean;
+      stripePriceId?: string;
+      stripeProductId?: string;
+    }
+  ): Promise<SubscriptionPlanDetails> {
+    return prisma.subscriptionPlanDetails.upsert({
+      where: { plan },
+      create: {
+        plan,
+        ...data,
+      },
+      update: data,
     });
   }
 }
