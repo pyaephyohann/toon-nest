@@ -39,6 +39,10 @@ export const tagTypes = {
   UNLOCK: "Unlock",
   INVOICE: "Invoice",
   INVOICE_LIST: "InvoiceList",
+
+  // Admin
+  ADMIN: "Admin",
+  ADMIN_DASHBOARD: "AdminDashboard",
 } as const;
 
 export type TagTypes = typeof tagTypes[keyof typeof tagTypes];

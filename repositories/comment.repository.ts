@@ -132,6 +132,50 @@ export class CommentRepository {
       where: { chapterId },
     });
   }
+
+  /**
+   * Get total comments count (admin)
+   */
+  async getTotalComments(): Promise<number> {
+    return prisma.comment.count();
+  }
+
+  /**
+   * Get recent comments (admin)
+   */
+  async getRecentComments(limit: number = 10) {
+    return prisma.comment.findMany({
+      take: limit,
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        id: true,
+        content: true,
+        createdAt: true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+            avatar: true,
+          },
+        },
+        chapter: {
+          select: {
+            id: true,
+            chapterNumber: true,
+            series: {
+              select: {
+                id: true,
+                title: true,
+                slug: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
 }
 
 export const commentRepository = new CommentRepository();

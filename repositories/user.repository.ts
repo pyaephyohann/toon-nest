@@ -195,6 +195,51 @@ export class UserRepository {
 
     return sortedGenres;
   }
+
+  /**
+   * Get total users count (admin)
+   */
+  async getTotalUsers(): Promise<number> {
+    return prisma.user.count();
+  }
+
+  /**
+   * Get premium users count (admin)
+   */
+  async getPremiumUsersCount(): Promise<number> {
+    return prisma.user.count({
+      where: {
+        subscriptions: {
+          some: {
+            status: "ACTIVE",
+            expiresAt: {
+              gt: new Date(),
+            },
+          },
+        },
+      },
+    });
+  }
+
+  /**
+   * Get recent users (admin)
+   */
+  async getRecentUsers(limit: number = 10) {
+    return prisma.user.findMany({
+      take: limit,
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        avatar: true,
+        role: true,
+        createdAt: true,
+      },
+    });
+  }
 }
 
 export const userRepository = new UserRepository();

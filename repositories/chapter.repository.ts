@@ -176,6 +176,38 @@ export class ChapterRepository {
       },
     });
   }
+
+  /**
+   * Get total chapters count (admin)
+   */
+  async getTotalChapters(): Promise<number> {
+    return prisma.chapter.count();
+  }
+
+  /**
+   * Get recent chapters (admin)
+   */
+  async getRecentChapters(limit: number = 10) {
+    return prisma.chapter.findMany({
+      take: limit,
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        id: true,
+        chapterNumber: true,
+        title: true,
+        createdAt: true,
+        series: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+          },
+        },
+      },
+    });
+  }
 }
 
 export const chapterRepository = new ChapterRepository();

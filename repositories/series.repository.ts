@@ -380,6 +380,33 @@ export class SeriesRepository {
       },
     });
   }
+
+  /**
+   * Get total series count (admin)
+   */
+  async getTotalSeries(): Promise<number> {
+    return prisma.series.count();
+  }
+
+  /**
+   * Get recent series (admin)
+   */
+  async getRecentSeries(limit: number = 10) {
+    return prisma.series.findMany({
+      take: limit,
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        coverImage: true,
+        status: true,
+        createdAt: true,
+      },
+    });
+  }
 }
 
 export const seriesRepository = new SeriesRepository();

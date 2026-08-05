@@ -1,10 +1,10 @@
 /**
  * Access Control Utilities
- * Centralized premium access control logic
+ * Centralized premium and admin access control logic
  */
 
-import { subscriptionRepository, chapterUnlockRepository } from "@/repositories";
-import { Chapter, UnlockType } from "@/app/generated/prisma/client";
+import { subscriptionRepository, chapterUnlockRepository, userRepository } from "@/repositories";
+import { Chapter, UnlockType, UserRole } from "@/app/generated/prisma/client";
 
 export type AccessStatus = "FREE" | "LOCKED" | "UNLOCKED";
 
@@ -13,6 +13,27 @@ export type AccessStatus = "FREE" | "LOCKED" | "UNLOCKED";
  */
 export async function isUserPremium(userId: string): Promise<boolean> {
   return subscriptionRepository.isUserPremium(userId);
+}
+
+/**
+ * Check if user has ADMIN role
+ */
+export async function isAdmin(userId: string): Promise<boolean> {
+  const user = await userRepository.findById(userId);
+  return user?.role === UserRole.ADMIN;
+}
+
+/**
+ * Require admin role - throws error if user is not admin
+ */
+export async function requireAdmin(userId: string): Promise<void> {
+  const user = await userRepository.findById(userId);
+  if (!user) {
+    throw new Error("User not found");
+  }
+  if (user.role !== UserRole.ADMIN) {
+    throw new Error("Admin access required");
+  }
 }
 
 /**

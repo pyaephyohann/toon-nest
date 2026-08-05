@@ -186,6 +186,21 @@ export class SubscriptionRepository {
       update: data,
     });
   }
+
+  /**
+   * Get active subscriptions count (admin)
+   */
+  async getActiveSubscriptionsCount(): Promise<number> {
+    const now = new Date();
+    return prisma.subscription.count({
+      where: {
+        status: "ACTIVE",
+        expiresAt: {
+          gt: now,
+        },
+      },
+    });
+  }
 }
 
 export const subscriptionRepository = new SubscriptionRepository();

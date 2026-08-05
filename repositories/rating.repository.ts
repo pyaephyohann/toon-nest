@@ -161,6 +161,13 @@ export class RatingRepository {
       where: { seriesId },
     });
   }
+
+  /**
+   * Get total ratings count (admin)
+   */
+  async getTotalRatings(): Promise<number> {
+    return prisma.rating.count();
+  }
 }
 
 export const ratingRepository = new RatingRepository();
