@@ -4,6 +4,7 @@ import { useGetPlansQuery, useGetSubscriptionsQuery } from "@/store/api";
 import { useState } from "react";
 import PlansGrid from "./components/PlansGrid";
 import CurrentSubscription from "./components/CurrentSubscription";
+import SubscriptionHistory from "./components/SubscriptionHistory";
 
 export default function PremiumPage() {
   const { data: plans, isLoading: plansLoading } = useGetPlansQuery();
@@ -12,7 +13,7 @@ export default function PremiumPage() {
 
   const activeSubscription = subscriptions?.find((sub) => {
     const expiresAt = new Date(sub.expiresAt);
-    return expiresAt > new Date();
+    return expiresAt > new Date() && sub.status === "ACTIVE";
   });
 
   const currentPlan = activeSubscription?.plan;
@@ -47,6 +48,8 @@ export default function PremiumPage() {
           onSelectPlan={handleSelectPlan}
         />
       </div>
+
+      <SubscriptionHistory />
     </div>
   );
 }

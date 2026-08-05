@@ -4,7 +4,7 @@
  */
 
 import { subscriptionRepository } from "@/repositories";
-import { SubscriptionPlan } from "@/app/generated/prisma/client";
+import { SubscriptionPlan, SubscriptionStatus } from "@/app/generated/prisma/client";
 
 export class SubscriptionService {
   /**
@@ -54,7 +54,92 @@ export class SubscriptionService {
       throw new Error("Subscription not found");
     }
 
-    return subscriptionRepository.delete(id);
+    // Update status to CANCELLED and set cancelledAt
+    return subscriptionRepository.update(id, {
+      status: SubscriptionStatus.CANCELLED,
+      cancelledAt: new Date(),
+      autoRenew: false,
+    });
+  }
+
+  /**
+   * Upgrade or downgrade subscription
+   */
+  async upgradeSubscription(userId: string, newPlan: SubscriptionPlan) {
+    // Validate plan
+    if (!Object.values(SubscriptionPlan).includes(newPlan)) {
+      throw new Error("Invalid subscription plan");
+    }
+
+    // Get current active subscription
+    const currentSub = await subscriptionRepository.findActiveByUserId(userId);
+    
+    if (!currentSub) {
+      // No current subscription, create new one
+      return this.createSubscription(userId, newPlan, 1);
+    }
+
+    // Cancel current subscription
+    await this.cancelSubscription(currentSub.id);
+
+    // Create new subscription with new plan
+    const startsAt = new Date();
+    const expiresAt = this.calculateExpiryDate(newPlan, 1, startsAt);
+
+    return subscriptionRepository.create(userId, newPlan, startsAt, expiresAt);
+  }
+
+  /**
+   * Toggle auto-renew for subscription
+   */
+  async toggleAutoRenew(subscriptionId: string, enabled: boolean) {
+    const existing = await subscriptionRepository.findById(subscriptionId);
+    if (!existing) {
+      throw new Error("Subscription not found");
+    }
+
+    return subscriptionRepository.update(subscriptionId, {
+      autoRenew: enabled,
+    });
+  }
+
+  /**
+   * Get subscription history for user
+   */
+  async getSubscriptionHistory(userId: string) {
+    return subscriptionRepository.findByUserId(userId);
+  }
+
+  /**
+   * Calculate remaining days until expiry
+   */
+  calculateRemainingDays(expiresAt: Date): number {
+    const now = new Date();
+    const expiry = new Date(expiresAt);
+    const diffTime = expiry.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return Math.max(0, diffDays);
+  }
+
+  /**
+   * Update subscription status based on expiry
+   */
+  async updateSubscriptionStatus(subscriptionId: string) {
+    const existing = await subscriptionRepository.findById(subscriptionId);
+    if (!existing) {
+      throw new Error("Subscription not found");
+    }
+
+    const now = new Date();
+    const isExpired = new Date(existing.expiresAt) < now;
+
+    if (isExpired && existing.status === SubscriptionStatus.ACTIVE) {
+      return subscriptionRepository.update(subscriptionId, {
+        status: SubscriptionStatus.EXPIRED,
+      });
+    }
+
+    return existing;
   }
 
   /**

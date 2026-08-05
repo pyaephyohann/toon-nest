@@ -4,7 +4,7 @@
  */
 
 import prisma from "@/lib/prisma";
-import { Subscription, SubscriptionPlan, SubscriptionPlanDetails } from "@/app/generated/prisma/client";
+import { Subscription, SubscriptionPlan, SubscriptionPlanDetails, SubscriptionStatus } from "@/app/generated/prisma/client";
 
 export class SubscriptionRepository {
   /**
@@ -57,14 +57,26 @@ export class SubscriptionRepository {
   }
 
   /**
+   * Find subscription by ID
+   */
+  async findById(id: string): Promise<Subscription | null> {
+    return prisma.subscription.findUnique({
+      where: { id },
+    });
+  }
+
+  /**
    * Update a subscription
    */
   async update(
     id: string,
     data: {
       plan?: SubscriptionPlan;
+      status?: SubscriptionStatus;
       startsAt?: Date;
       expiresAt?: Date;
+      autoRenew?: boolean;
+      cancelledAt?: Date | null;
     }
   ): Promise<Subscription> {
     return prisma.subscription.update({
