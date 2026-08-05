@@ -9,6 +9,8 @@ import { auth } from "@/auth";
 import { successResponse, handleApiError, errorResponse, paginatedResponse, createdResponse } from "@/lib/api/index";
 import { HTTP_STATUS, ERROR_CODES, PAGINATION } from "@/lib/api/index";
 import { genreService } from "@/services";
+import { ZodError } from "zod";
+import { createGenreSchema } from "@/lib/validations/genre.validation";
 
 export async function GET(request: NextRequest) {
   try {
@@ -19,8 +21,21 @@ export async function GET(request: NextRequest) {
       PAGINATION.MAX_LIMIT
     );
     const skip = (page - 1) * limit;
+    const search = searchParams.get("search") || undefined;
+    const sortBy = (searchParams.get("sortBy") as "name" | "createdAt" | "seriesCount") || "name";
+    const sortOrder = (searchParams.get("sortOrder") as "asc" | "desc") || "asc";
+    const hasIcon = searchParams.get("hasIcon") === "true" ? true : searchParams.get("hasIcon") === "false" ? false : undefined;
+    const hasColor = searchParams.get("hasColor") === "true" ? true : searchParams.get("hasColor") === "false" ? false : undefined;
 
-    const { genres, total } = await genreService.findAll({ skip, take: limit });
+    const { genres, total } = await genreService.findAll({
+      skip,
+      take: limit,
+      search,
+      sortBy,
+      sortOrder,
+      hasIcon,
+      hasColor,
+    });
 
     return paginatedResponse(genres, total, page, limit, "Genres retrieved successfully");
   } catch (error) {
@@ -49,20 +64,26 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, slug } = body;
 
-    if (!name) {
-      return errorResponse(
-        ERROR_CODES.VALIDATION_ERROR,
-        "Name is required",
-        HTTP_STATUS.BAD_REQUEST
-      );
-    }
+    // Validate input using Zod
+    const validatedData = createGenreSchema.parse(body);
 
-    const genre = await genreService.create(name, slug);
+    const genre = await genreService.create(
+      validatedData.name,
+      validatedData.slug,
+      validatedData.icon,
+      validatedData.color
+    );
 
     return createdResponse(genre, "Genre created successfully");
   } catch (error) {
+    if (error instanceof ZodError) {
+      return errorResponse(
+        ERROR_CODES.VALIDATION_ERROR,
+        error.issues[0].message,
+        HTTP_STATUS.BAD_REQUEST
+      );
+    }
     return handleApiError(error);
   }
 }

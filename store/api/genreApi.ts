@@ -14,6 +14,9 @@ export interface Genre {
   color?: string;
   createdAt: string;
   updatedAt: string;
+  _count?: {
+    series: number;
+  };
 }
 
 export interface GenreListResponse {
@@ -23,9 +26,19 @@ export interface GenreListResponse {
   limit: number;
 }
 
+export interface GetGenresParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  sortBy?: "name" | "createdAt" | "seriesCount";
+  sortOrder?: "asc" | "desc";
+  hasIcon?: boolean;
+  hasColor?: boolean;
+}
+
 export const genreApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getGenres: builder.query<GenreListResponse, { page?: number; limit?: number }>({
+    getGenres: builder.query<GenreListResponse, GetGenresParams>({
       query: (params) => ({
         url: "/genres",
         method: "GET",

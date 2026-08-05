@@ -46,8 +46,12 @@ export class GenreRepository {
     skip?: number;
     take?: number;
     search?: string;
+    sortBy?: "name" | "createdAt" | "seriesCount";
+    sortOrder?: "asc" | "desc";
+    hasIcon?: boolean;
+    hasColor?: boolean;
   }): Promise<{ genres: Genre[]; total: number }> {
-    const { skip = 0, take = 50, search } = options || {};
+    const { skip = 0, take = 50, search, sortBy = "name", sortOrder = "asc", hasIcon, hasColor } = options || {};
 
     const where: any = {};
 
@@ -57,13 +61,39 @@ export class GenreRepository {
       ];
     }
 
+    if (hasIcon !== undefined) {
+      where.icon = hasIcon ? { not: null } : null;
+    }
+
+    if (hasColor !== undefined) {
+      where.color = hasColor ? { not: null } : null;
+    }
+
+    let orderBy: any = {};
+    if (sortBy === "seriesCount") {
+      orderBy = {
+        series: {
+          _count: sortOrder,
+        },
+      };
+    } else {
+      orderBy = {
+        [sortBy]: sortOrder,
+      };
+    }
+
     const [genres, total] = await Promise.all([
       prisma.genre.findMany({
         where,
         skip,
         take,
-        orderBy: {
-          name: "asc",
+        orderBy,
+        include: {
+          _count: {
+            select: {
+              series: true,
+            },
+          },
         },
       }),
       prisma.genre.count({ where }),
