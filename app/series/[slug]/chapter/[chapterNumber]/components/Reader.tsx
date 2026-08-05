@@ -24,7 +24,7 @@ export default function Reader({ seriesSlug, chapterNumber }: Props) {
   });
 
   // Find current chapter by chapter number
-  const chapters = chaptersData?.chapters || [];
+  const chapters = chaptersData?.items || [];
   const currentChapter = chapters.find(
     (ch) => parseFloat(ch.chapterNumber.toString()) === chapterNumber
   );

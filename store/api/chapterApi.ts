@@ -18,6 +18,9 @@ export interface Chapter {
   updatedAt: string;
   series?: any;
   pages?: any[];
+  _count?: {
+    pages: number;
+  };
   access?: {
     canAccess: boolean;
     reason?: string;
@@ -25,20 +28,40 @@ export interface Chapter {
 }
 
 export interface ChapterListResponse {
-  chapters: Chapter[];
+  items: Chapter[];
   total: number;
+  page: number;
+  limit: number;
+}
+
+export interface GetChaptersParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  seriesId?: string;
+  unlockType?: "FREE" | "AD" | "PREMIUM";
+  sortBy?: "chapterNumber" | "views" | "createdAt" | "updatedAt";
+  sortOrder?: "asc" | "desc";
 }
 
 export interface CreateChapterRequest {
   seriesId: string;
   chapterNumber: number;
   title?: string;
-  slug: string;
+  slug?: string;
   unlockType?: string;
 }
 
 export const chapterApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    getChapters: builder.query<ChapterListResponse, GetChaptersParams>({
+      query: (params) => ({
+        url: "/chapters",
+        method: "GET",
+        params,
+      }),
+      providesTags: [tagTypes.CHAPTER_LIST],
+    }),
     getChapterById: builder.query<Chapter, string>({
       query: (id) => ({
         url: `/chapters/${id}`,
@@ -72,6 +95,7 @@ export const chapterApi = baseApi.injectEndpoints({
         body: data,
       }),
       invalidatesTags: (result, error, { id }) => [
+        tagTypes.CHAPTER_LIST,
         { type: tagTypes.CHAPTER, id },
       ],
     }),
@@ -83,6 +107,34 @@ export const chapterApi = baseApi.injectEndpoints({
       invalidatesTags: (result, error, id) => [
         tagTypes.CHAPTER_LIST,
         { type: tagTypes.CHAPTER, id },
+      ],
+    }),
+    duplicateChapter: builder.mutation<Chapter, { id: string; newChapterNumber: number }>({
+      query: ({ id, newChapterNumber }) => ({
+        url: `/chapters/${id}?action=duplicate`,
+        method: "POST",
+        body: { newChapterNumber },
+      }),
+      invalidatesTags: (result, error) => [tagTypes.CHAPTER_LIST],
+    }),
+    uploadChapterPages: builder.mutation<Chapter, { id: string; pages: { imageUrl: string }[] }>({
+      query: ({ id, pages }) => ({
+        url: `/chapters/${id}?action=upload-pages`,
+        method: "POST",
+        body: { pages },
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: tagTypes.CHAPTER, id },
+      ],
+    }),
+    reorderChapterPages: builder.mutation<void, { pageOrders: { id: string; pageNumber: number }[] }>({
+      query: ({ pageOrders }) => ({
+        url: `/chapters/${pageOrders[0].id}?action=reorder-pages`,
+        method: "POST",
+        body: { pageOrders },
+      }),
+      invalidatesTags: (result, error, { pageOrders }) => [
+        { type: tagTypes.CHAPTER, id: pageOrders[0].id },
       ],
     }),
     getChapterComments: builder.query<any, { id: string; page?: number; limit?: number }>({
@@ -108,11 +160,15 @@ export const chapterApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useGetChaptersQuery,
   useGetChapterByIdQuery,
   useGetChaptersBySeriesIdQuery,
   useCreateChapterMutation,
   useUpdateChapterMutation,
   useDeleteChapterMutation,
+  useDuplicateChapterMutation,
+  useUploadChapterPagesMutation,
+  useReorderChapterPagesMutation,
   useGetChapterCommentsQuery,
   useUnlockChapterMutation,
 } = chapterApi;

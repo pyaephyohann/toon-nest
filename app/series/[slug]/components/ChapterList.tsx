@@ -52,7 +52,7 @@ export default function ChapterList({ seriesId }: Props) {
     );
   }
 
-  const chapters = chaptersData?.chapters || [];
+  const chapters = chaptersData?.items || [];
 
   return (
     <div className="space-y-6">

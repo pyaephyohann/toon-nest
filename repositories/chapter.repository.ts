@@ -208,6 +208,149 @@ export class ChapterRepository {
       },
     });
   }
+
+  /**
+   * Find all chapters globally (admin)
+   */
+  async findAll(options?: {
+    skip?: number;
+    take?: number;
+    search?: string;
+    seriesId?: string;
+    unlockType?: "FREE" | "AD" | "PREMIUM";
+    sortBy?: "chapterNumber" | "views" | "createdAt" | "updatedAt";
+    sortOrder?: "asc" | "desc";
+  }): Promise<{ chapters: Chapter[]; total: number }> {
+    const { skip = 0, take = 20, search, seriesId, unlockType, sortBy = "createdAt", sortOrder = "desc" } = options || {};
+
+    const where: any = {};
+
+    if (seriesId) {
+      where.seriesId = seriesId;
+    }
+
+    if (unlockType) {
+      where.unlockType = unlockType;
+    }
+
+    if (search) {
+      where.OR = [
+        { title: { contains: search, mode: "insensitive" } },
+        { series: { title: { contains: search, mode: "insensitive" } } },
+      ];
+    }
+
+    const [chapters, total] = await Promise.all([
+      prisma.chapter.findMany({
+        where,
+        skip,
+        take,
+        orderBy: {
+          [sortBy]: sortOrder,
+        },
+        include: {
+          series: {
+            select: {
+              id: true,
+              title: true,
+              slug: true,
+            },
+          },
+          _count: {
+            select: {
+              pages: true,
+            },
+          },
+        },
+      }),
+      prisma.chapter.count({ where }),
+    ]);
+
+    return { chapters, total };
+  }
+
+  /**
+   * Create a chapter page
+   */
+  async createPage(data: {
+    chapterId: string;
+    pageNumber: number;
+    imageUrl: string;
+  }) {
+    return prisma.chapterPage.create({
+      data,
+    });
+  }
+
+  /**
+   * Bulk create chapter pages
+   */
+  async createPages(chapterId: string, imageUrls: string[]) {
+    const pages = imageUrls.map((imageUrl, index) => ({
+      chapterId,
+      pageNumber: index + 1,
+      imageUrl,
+    }));
+
+    return prisma.chapterPage.createMany({
+      data: pages,
+    });
+  }
+
+  /**
+   * Update a chapter page
+   */
+  async updatePage(pageId: string, data: { imageUrl?: string; pageNumber?: number }) {
+    return prisma.chapterPage.update({
+      where: { id: pageId },
+      data,
+    });
+  }
+
+  /**
+   * Update chapter number
+   */
+  async updateChapterNumber(id: string, chapterNumber: number) {
+    return prisma.chapter.update({
+      where: { id },
+      data: { chapterNumber },
+      include: {
+        series: true,
+      },
+    });
+  }
+
+  /**
+   * Delete a chapter page
+   */
+  async deletePage(pageId: string) {
+    return prisma.chapterPage.delete({
+      where: { id: pageId },
+    });
+  }
+
+  /**
+   * Delete all pages for a chapter
+   */
+  async deletePages(chapterId: string) {
+    return prisma.chapterPage.deleteMany({
+      where: { chapterId },
+    });
+  }
+
+  /**
+   * Reorder chapter pages
+   */
+  async reorderPages(pageOrders: { id: string; pageNumber: number }[]) {
+    return prisma.$transaction(
+      pageOrders.map(({ id, pageNumber }) =>
+        prisma.chapterPage.update({
+          where: { id },
+          data: { pageNumber },
+        })
+      )
+    );
+  }
 }
 
 export const chapterRepository = new ChapterRepository();
