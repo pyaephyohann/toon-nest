@@ -8,6 +8,7 @@ import {
   ImageIcon,
   Headphones,
   BadgeCheck,
+  Lock,
 } from "lucide-react";
 
 const benefits = [
@@ -55,30 +56,54 @@ const benefits = [
   },
 ];
 
-export default function PremiumBenefits() {
-  return (
-    <aside className="rounded-3xl border border-border bg-card p-6">
-      <h3 className="mb-6 text-xl font-bold">Premium Benefits</h3>
+interface Props {
+  isPremium?: boolean;
+}
 
-      <div className="space-y-5">
+export default function PremiumBenefits({ isPremium = false }: Props) {
+  return (
+    <aside className="rounded-2xl border border-border bg-card p-6">
+      <div className="flex items-center gap-3 mb-6">
+        {isPremium ? (
+          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+            <BadgeCheck className="h-5 w-5 text-primary" />
+          </div>
+        ) : (
+          <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
+            <Lock className="h-5 w-5 text-muted-foreground" />
+          </div>
+        )}
+        <h3 className="text-xl font-bold">
+          {isPremium ? "Premium Benefits" : "Unlock Premium"}
+        </h3>
+      </div>
+
+      <div className="space-y-4">
         {benefits.map((item) => {
           const Icon = item.icon;
 
           return (
-            <div key={item.title} className="flex gap-4">
+            <div
+              key={item.title}
+              className={`flex gap-4 ${!isPremium ? "opacity-60" : ""}`}
+            >
               <div
-                className={`flex h-11 w-11 items-center justify-center rounded-xl ${item.color}`}
+                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${item.color}`}
               >
                 <Icon size={18} />
               </div>
 
-              <div>
-                <h4 className="font-semibold">{item.title}</h4>
+              <div className="flex-1">
+                <h4 className="font-semibold text-sm">{item.title}</h4>
 
-                <p className="mt-1 text-sm text-muted-foreground">
+                <p className="mt-1 text-xs text-muted-foreground">
                   {item.desc}
                 </p>
               </div>
+
+              {!isPremium && (
+                <Lock className="h-4 w-4 text-muted-foreground shrink-0 mt-1" />
+              )}
             </div>
           );
         })}

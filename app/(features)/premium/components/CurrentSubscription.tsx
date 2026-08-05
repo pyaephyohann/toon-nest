@@ -1,9 +1,10 @@
 "use client";
 
 import { Subscription } from "@/store/api";
-import { Crown, Calendar, X, RefreshCw, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { Crown, Calendar, X, RefreshCw, ArrowUpRight, ArrowDownRight, Info } from "lucide-react";
 import { useCancelSubscriptionMutation, useToggleAutoRenewMutation, useUpgradeSubscriptionMutation } from "@/store/api";
 import { useState } from "react";
+import StatusBadge from "./StatusBadge";
 
 interface Props {
   subscription: Subscription | null;
@@ -68,12 +69,32 @@ export default function CurrentSubscription({ subscription, isLoading }: Props) 
   };
 
   const planName = subscription.plan === "MONTHLY" ? "Premium Monthly" : subscription.plan === "YEARLY" ? "Premium Yearly" : subscription.plan;
-  const status = subscription.status === "ACTIVE" ? "Active" : subscription.status === "CANCELLED" ? "Cancelled" : subscription.status === "EXPIRED" ? "Expired" : subscription.status;
-  const statusColor = subscription.status === "ACTIVE" ? "text-green-600 bg-green-500/10" : subscription.status === "CANCELLED" ? "text-yellow-600 bg-yellow-500/10" : "text-red-600 bg-red-500/10";
   const billingInterval = subscription.plan === "MONTHLY" ? "Monthly" : subscription.plan === "YEARLY" ? "Yearly" : "N/A";
   const startDate = new Date(subscription.startsAt).toLocaleDateString();
   const endDate = new Date(subscription.expiresAt).toLocaleDateString();
   const remainingDays = Math.max(0, Math.ceil((new Date(subscription.expiresAt).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)));
+
+  const getPlanPrice = (plan: string) => {
+    switch (plan) {
+      case "MONTHLY":
+        return "$9.99/month";
+      case "YEARLY":
+        return "$99.99/year";
+      default:
+        return "N/A";
+    }
+  };
+
+  const getProratedAmount = (currentPlan: string, newPlan: string) => {
+    // Placeholder for prorated calculation
+    if (currentPlan === "MONTHLY" && newPlan === "YEARLY") {
+      return "$89.99 (prorated)";
+    }
+    if (currentPlan === "YEARLY" && newPlan === "MONTHLY") {
+      return "$9.99/month";
+    }
+    return getPlanPrice(newPlan);
+  };
 
   return (
     <div className="rounded-2xl border border-primary bg-primary/5 p-6">
@@ -85,9 +106,7 @@ export default function CurrentSubscription({ subscription, isLoading }: Props) 
           <div>
             <div className="flex items-center gap-2">
               <h3 className="font-semibold text-lg">{planName}</h3>
-              <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusColor}`}>
-                {status}
-              </span>
+              <StatusBadge status={subscription.status} size="sm" />
             </div>
             <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
               <span className="flex items-center gap-1">
@@ -136,26 +155,42 @@ export default function CurrentSubscription({ subscription, isLoading }: Props) 
 
       {showUpgradeMenu && (
         <div className="mt-4 rounded-lg bg-background p-4 border border-border">
-          <p className="text-sm font-medium mb-3">Change Plan</p>
-          <div className="space-y-2">
+          <div className="flex items-center gap-2 mb-3">
+            <Info className="h-4 w-4 text-muted-foreground" />
+            <p className="text-sm font-medium">Change Plan</p>
+          </div>
+          
+          <div className="space-y-3">
             {subscription.plan !== "MONTHLY" && (
               <button
                 onClick={() => handleUpgrade("MONTHLY")}
-                className="w-full flex items-center justify-between rounded-lg border border-border px-4 py-2 text-sm hover:bg-accent transition"
+                className="w-full flex items-center justify-between rounded-lg border border-border px-4 py-3 text-sm hover:bg-accent transition"
               >
-                <span>Switch to Monthly</span>
-                <ArrowUpRight className="h-4 w-4" />
+                <div className="text-left">
+                  <p className="font-medium">Switch to Monthly</p>
+                  <p className="text-xs text-muted-foreground">{getProratedAmount(subscription.plan, "MONTHLY")}</p>
+                </div>
+                <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
               </button>
             )}
             {subscription.plan !== "YEARLY" && (
               <button
                 onClick={() => handleUpgrade("YEARLY")}
-                className="w-full flex items-center justify-between rounded-lg border border-border px-4 py-2 text-sm hover:bg-accent transition"
+                className="w-full flex items-center justify-between rounded-lg border border-border px-4 py-3 text-sm hover:bg-accent transition"
               >
-                <span>Switch to Yearly (Save 20%)</span>
-                <ArrowDownRight className="h-4 w-4" />
+                <div className="text-left">
+                  <p className="font-medium">Switch to Yearly</p>
+                  <p className="text-xs text-muted-foreground">{getProratedAmount(subscription.plan, "YEARLY")} (Save 17%)</p>
+                </div>
+                <ArrowDownRight className="h-4 w-4 text-muted-foreground" />
               </button>
             )}
+          </div>
+
+          <div className="mt-4 p-3 bg-muted/50 rounded-lg">
+            <p className="text-xs text-muted-foreground">
+              Plan changes take effect immediately. Your billing cycle will be adjusted based on the prorated amount.
+            </p>
           </div>
         </div>
       )}
@@ -163,7 +198,7 @@ export default function CurrentSubscription({ subscription, isLoading }: Props) 
       {showCancelConfirm && (
         <div className="mt-4 rounded-lg bg-background p-4 border border-border">
           <p className="text-sm mb-4">
-            Are you sure you want to cancel your subscription? You will lose access to premium features at the end of your billing period.
+            Are you sure you want to cancel your subscription? You will lose access to premium features at the end of your billing period on {endDate}.
           </p>
           <div className="flex gap-2">
             <button

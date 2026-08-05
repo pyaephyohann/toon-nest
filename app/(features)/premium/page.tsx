@@ -5,9 +5,12 @@ import { useGetPlansQuery, useGetSubscriptionsQuery, useCreateCheckoutSessionMut
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import PlansGrid from "./components/PlansGrid";
-import CurrentSubscription from "./components/CurrentSubscription";
+import SubscriptionSummary from "./components/SubscriptionSummary";
 import SubscriptionHistory from "./components/SubscriptionHistory";
 import BillingHistory from "./components/BillingHistory";
+import BillingSummary from "./components/BillingSummary";
+import PremiumBenefits from "./components/PremiumBenefits";
+import HeroBanner from "./components/HeroBanner";
 
 function PremiumPageContent() {
   const { data: plans, isLoading: plansLoading } = useGetPlansQuery();
@@ -33,6 +36,7 @@ function PremiumPageContent() {
   });
 
   const currentPlan = activeSubscription?.plan;
+  const isPremium = !!activeSubscription;
 
   const handleSelectPlan = async (plan: string) => {
     if (plan === "FREE") {
@@ -53,10 +57,7 @@ function PremiumPageContent() {
 
   return (
     <div className="space-y-8">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-2">Premium Plans</h1>
-        <p className="text-muted-foreground">Choose the perfect plan for your manga reading experience</p>
-      </div>
+      <HeroBanner />
 
       {checkoutStatus === "success" && (
         <div className="rounded-2xl border border-green-500 bg-green-500/10 p-4 text-center">
@@ -70,22 +71,33 @@ function PremiumPageContent() {
         </div>
       )}
 
-      <CurrentSubscription
-        subscription={activeSubscription || null}
-        isLoading={subscriptionsLoading}
-      />
+      <div className="grid gap-8 lg:grid-cols-3">
+        {/* Left Column - Subscription Info */}
+        <div className="lg:col-span-2 space-y-6">
+          <SubscriptionSummary
+            subscription={activeSubscription || null}
+            isLoading={subscriptionsLoading}
+          />
 
-      <div>
-        <h2 className="text-2xl font-bold mb-6">Available Plans</h2>
-        <PlansGrid
-          plans={plans || []}
-          currentPlan={currentPlan}
-          onSelectPlan={handleSelectPlan}
-        />
+          <div>
+            <h2 className="text-2xl font-bold mb-6">Available Plans</h2>
+            <PlansGrid
+              plans={plans || []}
+              currentPlan={currentPlan}
+              onSelectPlan={handleSelectPlan}
+            />
+          </div>
+
+          <SubscriptionHistory />
+          <BillingHistory />
+        </div>
+
+        {/* Right Column - Benefits & Billing */}
+        <div className="space-y-6">
+          <PremiumBenefits isPremium={isPremium} />
+          <BillingSummary />
+        </div>
       </div>
-
-      <SubscriptionHistory />
-      <BillingHistory />
     </div>
   );
 }

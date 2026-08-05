@@ -2,7 +2,8 @@
 
 import { Invoice } from "@/store/api";
 import { useGetInvoicesQuery } from "@/store/api";
-import { Receipt, Download, ExternalLink, CheckCircle, XCircle, Clock, AlertCircle } from "lucide-react";
+import { Receipt, Download, ExternalLink, AlertCircle } from "lucide-react";
+import StatusBadge from "./StatusBadge";
 
 export default function BillingHistory() {
   const { data: invoices, isLoading, error } = useGetInvoicesQuery();
@@ -51,36 +52,6 @@ export default function BillingHistory() {
     );
   }
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "PAID":
-        return <CheckCircle className="h-5 w-5 text-green-600" />;
-      case "FAILED":
-        return <XCircle className="h-5 w-5 text-red-600" />;
-      case "PENDING":
-        return <Clock className="h-5 w-5 text-yellow-600" />;
-      case "REFUNDED":
-        return <AlertCircle className="h-5 w-5 text-blue-600" />;
-      default:
-        return <Clock className="h-5 w-5 text-muted-foreground" />;
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "PAID":
-        return "text-green-600 bg-green-500/10";
-      case "FAILED":
-        return "text-red-600 bg-red-500/10";
-      case "PENDING":
-        return "text-yellow-600 bg-yellow-500/10";
-      case "REFUNDED":
-        return "text-blue-600 bg-blue-500/10";
-      default:
-        return "text-muted-foreground bg-muted";
-    }
-  };
-
   const getPlanName = (plan: string) => {
     switch (plan) {
       case "MONTHLY":
@@ -111,14 +82,12 @@ export default function BillingHistory() {
           >
             <div className="flex items-center gap-4">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-background border border-border">
-                {getStatusIcon(invoice.status)}
+                <Receipt className="h-5 w-5 text-muted-foreground" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
                   <p className="font-medium">{getPlanName(invoice.subscription?.plan || "Unknown")}</p>
-                  <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${getStatusColor(invoice.status)}`}>
-                    {invoice.status}
-                  </span>
+                  <StatusBadge status={invoice.status} size="sm" />
                 </div>
                 <p className="text-sm text-muted-foreground">
                   {new Date(invoice.createdAt).toLocaleDateString()}
