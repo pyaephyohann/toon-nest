@@ -10,6 +10,8 @@ import { auth } from "@/auth";
 import { successResponse, handleApiError, errorResponse } from "@/lib/api/index";
 import { HTTP_STATUS, ERROR_CODES } from "@/lib/api/index";
 import { seriesService } from "@/services";
+import { ZodError } from "zod";
+import { updateMangaSchema } from "@/lib/validations/manga.validation";
 
 interface RouteContext {
   params: Promise<{ id: string }>;
@@ -49,10 +51,23 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     const { id } = await context.params;
     const body = await request.json();
 
-    const series = await seriesService.updateSeries(id, body);
+    // Validate input using Zod
+    const validatedData = updateMangaSchema.parse(body);
+
+    const series = await seriesService.updateSeries(id, {
+      ...validatedData,
+      status: validatedData.status as any,
+    });
 
     return successResponse(series, "Series updated successfully");
   } catch (error) {
+    if (error instanceof ZodError) {
+      return errorResponse(
+        ERROR_CODES.VALIDATION_ERROR,
+        error.issues[0].message,
+        HTTP_STATUS.BAD_REQUEST
+      );
+    }
     return handleApiError(error);
   }
 }

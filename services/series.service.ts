@@ -5,6 +5,7 @@
 
 import { seriesRepository } from "@/repositories";
 import { SeriesStatus } from "@/app/generated/prisma/client";
+import { createMangaSchema, updateMangaSchema } from "@/lib/validations/manga.validation";
 
 export class SeriesService {
   /**
@@ -53,7 +54,7 @@ export class SeriesService {
    */
   async createSeries(data: {
     title: string;
-    slug: string;
+    slug?: string;
     description: string;
     coverImage: string;
     bannerImage?: string;
@@ -63,13 +64,23 @@ export class SeriesService {
     genreIds?: string[];
     tagIds?: string[];
   }) {
+    // Validate input using Zod
+    const validatedData = createMangaSchema.parse(data);
+
+    // Auto-generate slug if not provided
+    const slug = validatedData.slug || validatedData.title.toLowerCase().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-");
+
     // Validate slug uniqueness
-    const existing = await seriesRepository.findBySlug(data.slug);
+    const existing = await seriesRepository.findBySlug(slug);
     if (existing) {
       throw new Error("Slug already exists");
     }
 
-    return seriesRepository.create(data);
+    return seriesRepository.create({
+      ...validatedData,
+      slug,
+      status: validatedData.status as SeriesStatus,
+    });
   }
 
   /**
@@ -93,6 +104,9 @@ export class SeriesService {
       tagIds?: string[];
     }
   ) {
+    // Validate input using Zod
+    const validatedData = updateMangaSchema.parse(data);
+
     // Check if series exists
     const existing = await seriesRepository.findById(id);
     if (!existing) {
@@ -100,14 +114,17 @@ export class SeriesService {
     }
 
     // Validate slug uniqueness if changing
-    if (data.slug && data.slug !== existing.slug) {
-      const slugExists = await seriesRepository.findBySlug(data.slug);
+    if (validatedData.slug && validatedData.slug !== existing.slug) {
+      const slugExists = await seriesRepository.findBySlug(validatedData.slug);
       if (slugExists) {
         throw new Error("Slug already exists");
       }
     }
 
-    return seriesRepository.update(id, data);
+    return seriesRepository.update(id, {
+      ...validatedData,
+      status: validatedData.status as SeriesStatus,
+    });
   }
 
   /**

@@ -45,20 +45,38 @@ export interface MangaListResponse {
 
 export interface CreateMangaRequest {
   title: string;
-  slug: string;
+  slug?: string;
   description: string;
   coverImage: string;
   bannerImage?: string;
   author?: string;
   artist?: string;
   status?: string;
+  verified?: boolean;
+  isFeatured?: boolean;
+  isNew?: boolean;
   genreIds?: string[];
   tagIds?: string[];
 }
 
+export interface GetMangaListParams {
+  page?: number;
+  limit?: number;
+  status?: string;
+  genreId?: string;
+  search?: string;
+  year?: number;
+  timePeriod?: "daily" | "weekly" | "monthly" | "all";
+  orderByField?: string;
+  orderByDirection?: string;
+  isFeatured?: boolean;
+  isNew?: boolean;
+  verified?: boolean;
+}
+
 export const mangaApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getMangaList: builder.query<MangaListResponse, { page?: number; limit?: number; status?: string; genreId?: string; search?: string; year?: number; timePeriod?: "daily" | "weekly" | "monthly" | "all"; orderByField?: string; orderByDirection?: string }>({
+    getMangaList: builder.query<MangaListResponse, GetMangaListParams>({
       query: (params) => ({
         url: "/manga",
         method: "GET",

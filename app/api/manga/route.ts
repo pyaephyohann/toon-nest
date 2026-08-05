@@ -9,6 +9,8 @@ import { auth } from "@/auth";
 import { successResponse, handleApiError, errorResponse, paginatedResponse, createdResponse } from "@/lib/api/index";
 import { HTTP_STATUS, ERROR_CODES, PAGINATION } from "@/lib/api/index";
 import { seriesService } from "@/services";
+import { ZodError } from "zod";
+import { createMangaSchema } from "@/lib/validations/manga.validation";
 
 export async function GET(request: NextRequest) {
   try {
@@ -68,31 +70,32 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { title, slug, description, coverImage, bannerImage, author, artist, status, genreIds, tagIds } = body;
 
-    if (!title || !slug || !description || !coverImage) {
-      return errorResponse(
-        ERROR_CODES.VALIDATION_ERROR,
-        "Title, slug, description, and coverImage are required",
-        HTTP_STATUS.BAD_REQUEST
-      );
-    }
+    // Validate input using Zod
+    const validatedData = createMangaSchema.parse(body);
 
     const series = await seriesService.createSeries({
-      title,
-      slug,
-      description,
-      coverImage,
-      bannerImage,
-      author,
-      artist,
-      status,
-      genreIds,
-      tagIds,
+      title: validatedData.title,
+      slug: validatedData.slug,
+      description: validatedData.description,
+      coverImage: validatedData.coverImage,
+      bannerImage: validatedData.bannerImage,
+      author: validatedData.author,
+      artist: validatedData.artist,
+      status: validatedData.status as any,
+      genreIds: validatedData.genreIds,
+      tagIds: validatedData.tagIds,
     });
 
     return createdResponse(series, "Series created successfully");
   } catch (error) {
+    if (error instanceof ZodError) {
+      return errorResponse(
+        ERROR_CODES.VALIDATION_ERROR,
+        error.issues[0].message,
+        HTTP_STATUS.BAD_REQUEST
+      );
+    }
     return handleApiError(error);
   }
 }
