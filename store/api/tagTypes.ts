@@ -37,6 +37,8 @@ export const tagTypes = {
   SUBSCRIPTION: "Subscription",
   SUBSCRIPTION_LIST: "SubscriptionList",
   UNLOCK: "Unlock",
+  INVOICE: "Invoice",
+  INVOICE_LIST: "InvoiceList",
 } as const;
 
 export type TagTypes = typeof tagTypes[keyof typeof tagTypes];
