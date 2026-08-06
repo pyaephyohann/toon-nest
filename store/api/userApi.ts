@@ -15,6 +15,32 @@ export interface User {
   role: string;
   avatar?: string | null;
   readingStreak?: number;
+  suspendedAt?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+  _count?: {
+    bookmarks: number;
+    history: number;
+    comments: number;
+    ratings: number;
+  };
+}
+
+export interface UserListResponse {
+  items: User[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export interface GetUsersParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  role?: "USER" | "ADMIN";
+  isSuspended?: boolean;
+  sortBy?: "createdAt" | "username" | "readingStreak";
+  sortOrder?: "asc" | "desc";
 }
 
 export interface UpdateUserRequest {
@@ -22,6 +48,14 @@ export interface UpdateUserRequest {
   displayName?: string;
   bio?: string;
   avatar?: string;
+}
+
+export interface UpdateUserAdminRequest {
+  username?: string;
+  displayName?: string;
+  bio?: string;
+  role?: string;
+  suspendedAt?: string | null;
 }
 
 export interface UserStatistics {
@@ -45,6 +79,14 @@ export interface ChangePasswordRequest {
 
 export const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    getUsers: builder.query<UserListResponse, GetUsersParams>({
+      query: (params) => ({
+        url: "/users",
+        method: "GET",
+        params,
+      }),
+      providesTags: [tagTypes.USER],
+    }),
     getUserById: builder.query<User, string>({
       query: (id) => ({
         url: `/users/${id}`,
@@ -77,6 +119,48 @@ export const userApi = baseApi.injectEndpoints({
         { type: tagTypes.USER, id },
       ],
     }),
+    updateUserAdmin: builder.mutation<User, { id: string; data: UpdateUserAdminRequest }>({
+      query: ({ id, data }) => ({
+        url: `/users/${id}?admin=true`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        tagTypes.USER,
+        { type: tagTypes.USER, id },
+      ],
+    }),
+    changeUserRole: builder.mutation<User, { id: string; role: string }>({
+      query: ({ id, role }) => ({
+        url: `/users/${id}`,
+        method: "PATCH",
+        body: { role },
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        tagTypes.USER,
+        { type: tagTypes.USER, id },
+      ],
+    }),
+    suspendUser: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `/users/${id}?action=suspend`,
+        method: "POST",
+      }),
+      invalidatesTags: (result, error, id) => [
+        tagTypes.USER,
+        { type: tagTypes.USER, id },
+      ],
+    }),
+    reactivateUser: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `/users/${id}?action=reactivate`,
+        method: "POST",
+      }),
+      invalidatesTags: (result, error, id) => [
+        tagTypes.USER,
+        { type: tagTypes.USER, id },
+      ],
+    }),
     uploadAvatar: builder.mutation<User, { id: string; avatar: string }>({
       query: ({ id, avatar }) => ({
         url: `/users/${id}/avatar`,
@@ -87,12 +171,13 @@ export const userApi = baseApi.injectEndpoints({
         { type: tagTypes.USER, id },
       ],
     }),
-    deleteUser: builder.mutation<void, string>({
-      query: (id) => ({
-        url: `/users/${id}`,
+    deleteUser: builder.mutation<void, { id: string; admin?: boolean }>({
+      query: ({ id, admin }) => ({
+        url: `/users/${id}${admin ? "?admin=true" : ""}`,
         method: "DELETE",
       }),
-      invalidatesTags: (result, error, id) => [
+      invalidatesTags: (result, error, { id }) => [
+        tagTypes.USER,
         { type: tagTypes.USER, id },
       ],
     }),
@@ -108,10 +193,15 @@ export const userApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useGetUsersQuery,
   useGetUserByIdQuery,
   useGetUserStatisticsQuery,
   useGetFavoriteGenresQuery,
   useUpdateUserMutation,
+  useUpdateUserAdminMutation,
+  useChangeUserRoleMutation,
+  useSuspendUserMutation,
+  useReactivateUserMutation,
   useUploadAvatarMutation,
   useDeleteUserMutation,
   useChangePasswordMutation,

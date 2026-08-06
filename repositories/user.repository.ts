@@ -60,6 +60,7 @@ export class UserRepository {
       password?: string;
       avatar?: string;
       role?: UserRole;
+      suspendedAt?: Date | null;
     }
   ): Promise<User> {
     return prisma.user.update({
@@ -236,7 +237,96 @@ export class UserRepository {
         email: true,
         avatar: true,
         role: true,
+        suspendedAt: true,
         createdAt: true,
+      },
+    });
+  }
+
+  /**
+   * Find all users globally (admin)
+   */
+  async findAll(options?: {
+    skip?: number;
+    take?: number;
+    search?: string;
+    role?: "USER" | "ADMIN";
+    isSuspended?: boolean;
+    sortBy?: "createdAt" | "username" | "readingStreak";
+    sortOrder?: "asc" | "desc";
+  }): Promise<{ users: Omit<User, "password">[]; total: number }> {
+    const { skip = 0, take = 20, search, role, isSuspended, sortBy = "createdAt", sortOrder = "desc" } = options || {};
+
+    const where: any = {};
+
+    if (role) {
+      where.role = role;
+    }
+
+    if (isSuspended !== undefined) {
+      where.suspendedAt = isSuspended ? { not: null } : null;
+    }
+
+    if (search) {
+      where.OR = [
+        { username: { contains: search, mode: "insensitive" } },
+        { email: { contains: search, mode: "insensitive" } },
+        { displayName: { contains: search, mode: "insensitive" } },
+      ];
+    }
+
+    const [users, total] = await Promise.all([
+      prisma.user.findMany({
+        where,
+        skip,
+        take,
+        orderBy: {
+          [sortBy]: sortOrder,
+        },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          avatar: true,
+          displayName: true,
+          bio: true,
+          role: true,
+          readingStreak: true,
+          suspendedAt: true,
+          createdAt: true,
+          updatedAt: true,
+          _count: {
+            select: {
+              bookmarks: true,
+              history: true,
+              comments: true,
+              ratings: true,
+            },
+          },
+        },
+      }),
+      prisma.user.count({ where }),
+    ]);
+
+    return { users: users as Omit<User, "password">[], total };
+  }
+
+  /**
+   * Count users by role
+   */
+  async countByRole(role: "USER" | "ADMIN"): Promise<number> {
+    return prisma.user.count({
+      where: { role },
+    });
+  }
+
+  /**
+   * Count suspended users
+   */
+  async countSuspended(): Promise<number> {
+    return prisma.user.count({
+      where: {
+        suspendedAt: { not: null },
       },
     });
   }

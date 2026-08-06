@@ -55,7 +55,7 @@ export default function AccountSettings({ userId }: Props) {
     }
 
     try {
-      await deleteUser(userId).unwrap();
+      await deleteUser({ id: userId }).unwrap();
       await signOut({ callbackUrl: "/" });
     } catch (error) {
       console.error("Failed to delete account:", error);
