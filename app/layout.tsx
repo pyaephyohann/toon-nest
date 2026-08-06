@@ -9,6 +9,7 @@ import ReduxProvider from "@/store/provider";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -16,6 +17,11 @@ export const metadata: Metadata = {
   description: "Read your favorite webtoons",
   icons: {
     icon: "/favicon.png",
+  },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
   },
 };
 
@@ -26,6 +32,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} antialiased`}>
+      <head>
+        {/* Preconnect to external domains */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://res.cloudinary.com" />
+        
+        {/* DNS prefetch for potential external resources */}
+        <link rel="dns-prefetch" href="https://api.stripe.com" />
+      </head>
       <body className="bg-background text-foreground">
         <ReduxProvider>
           <div className="flex h-screen flex-col">

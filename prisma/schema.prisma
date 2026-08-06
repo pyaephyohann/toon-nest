@@ -96,6 +96,11 @@ model User {
   reports        Report[] @relation("ReporterReports")
   moderatedReports Report[] @relation("ModeratorReports")
   moderationActions ModerationAction[]
+
+  @@index([email])
+  @@index([username])
+  @@index([role])
+  @@index([createdAt])
 }
 
 model Series {
@@ -139,6 +144,14 @@ model Series {
   collections   CollectionSeries[]
   editorPicks   EditorPick[]
   userStatuses  UserSeriesStatus[]
+
+  @@index([status])
+  @@index([isFeatured])
+  @@index([isNew])
+  @@index([createdAt])
+  @@index([averageRating])
+  @@index([views])
+  @@index([slug])
 }
 
 model Chapter {
@@ -262,6 +275,9 @@ model Bookmark {
   createdAt DateTime @default(now())
 
   @@unique([userId, seriesId])
+  @@index([userId])
+  @@index([seriesId])
+  @@index([createdAt])
 }
 
 model ReadingHistory {
@@ -294,6 +310,9 @@ model Rating {
   updatedAt DateTime @updatedAt
 
   @@unique([userId, seriesId])
+  @@index([seriesId])
+  @@index([rating])
+  @@index([createdAt])
 }
 
 model Comment {
@@ -309,6 +328,10 @@ model Comment {
 
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  @@index([chapterId])
+  @@index([userId])
+  @@index([createdAt])
 }
 
 model Notification {
@@ -333,6 +356,8 @@ model Notification {
 
   @@index([userId])
   @@index([isRead])
+  @@index([createdAt])
+  @@index([type])
 }
 
 enum NotificationType {

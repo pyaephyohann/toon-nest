@@ -46,4 +46,9 @@ export const baseApi = createApi({
   baseQuery: axiosBaseQuery(),
   tagTypes: Object.values(tagTypes),
   endpoints: () => ({}),
+  // Cache configuration
+  keepUnusedDataFor: 300, // Keep unused data for 5 minutes
+  refetchOnMountOrArgChange: false,
+  refetchOnFocus: false,
+  refetchOnReconnect: true,
 });
