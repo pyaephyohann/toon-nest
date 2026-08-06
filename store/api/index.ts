@@ -18,6 +18,7 @@ export { subscriptionApi, useGetPlansQuery, useGetSubscriptionsQuery, useGetSubs
 export { paymentApi, useCreateCheckoutSessionMutation, useGetInvoicesQuery, useGetInvoiceByIdQuery } from "./paymentApi";
 export { adminApi, useGetDashboardStatisticsQuery, useGetRecentActivityQuery, useGetReadingAnalyticsQuery, useGetRevenueAnalyticsQuery, useGetUserAnalyticsQuery, useGetPlatformAnalyticsQuery } from "./adminApi";
 export { moderationApi, useGetReportsQuery, useGetReportByIdQuery, useResolveReportMutation, useDismissReportMutation, useModerateCommentMutation, useModerateRatingMutation, useModerateUserMutation, useGetModerationHistoryQuery } from "./moderationApi";
+export { settingsApi, useGetGeneralSettingsQuery, useUpdateGeneralSettingsMutation, useGetHomepageSettingsQuery, useUpdateHomepageSettingsMutation, useGetPremiumSettingsQuery, useUpdatePremiumSettingsMutation, useGetCommunitySettingsQuery, useUpdateCommunitySettingsMutation, useGetStorageSettingsQuery, useUpdateStorageSettingsMutation, useGetSEOSettingsQuery, useUpdateSEOSettingsMutation, useGetEmailSettingsQuery, useUpdateEmailSettingsMutation, useGetFeatureFlagsQuery, useUpdateFeatureFlagsMutation, useGetMaintenanceSettingsQuery, useUpdateMaintenanceSettingsMutation } from "./settingsApi";
 
 // Re-export types with unique names to avoid conflicts
 export type { User as AuthUser, LoginRequest, RegisterRequest } from "./authApi";

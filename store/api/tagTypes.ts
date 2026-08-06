@@ -44,6 +44,7 @@ export const tagTypes = {
   ADMIN: "Admin",
   ADMIN_DASHBOARD: "AdminDashboard",
   MODERATION: "Moderation",
+  SETTINGS: "Settings",
 } as const;
 
 export type TagTypes = typeof tagTypes[keyof typeof tagTypes];
