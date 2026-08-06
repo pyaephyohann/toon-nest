@@ -84,6 +84,73 @@ export interface RecentActivity {
   }>;
 }
 
+export interface ReadingAnalytics {
+  totalViews: number;
+  totalReaders: number;
+  totalBookmarks: number;
+  totalRatings: number;
+  averageRating: number;
+  topSeries: Array<{
+    id: string;
+    title: string;
+    slug: string;
+    coverImage: string;
+    views: number;
+    readers: number;
+  }>;
+  timeSeriesData: Array<{
+    date: string;
+    views: number;
+    readers: number;
+  }>;
+}
+
+export interface RevenueAnalytics {
+  totalRevenue: number;
+  totalPayments: number;
+  averageOrderValue: number;
+  revenueByPlan: Record<string, number>;
+  timeSeriesData: Array<{
+    date: string;
+    revenue: number;
+    payments: number;
+  }>;
+}
+
+export interface UserAnalytics {
+  totalUsers: number;
+  newUsers: number;
+  activeUsers: number;
+  userGrowthRate: number;
+  timeSeriesData: Array<{
+    date: string;
+    registrations: number;
+  }>;
+  engagementMetrics: {
+    bookmarks: number;
+    comments: number;
+    ratings: number;
+  };
+}
+
+export interface PlatformAnalytics {
+  totalSeries: number;
+  totalChapters: number;
+  totalComments: number;
+  totalRatings: number;
+  genreDistribution: Array<{
+    name: string;
+    readers: number;
+    seriesCount: number;
+  }>;
+}
+
+export interface AnalyticsParams {
+  startDate?: string;
+  endDate?: string;
+  period?: "DAILY" | "WEEKLY" | "MONTHLY";
+}
+
 export const adminApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getDashboardStatistics: builder.query<DashboardStatistics, void>({
@@ -101,10 +168,46 @@ export const adminApi = baseApi.injectEndpoints({
       }),
       providesTags: [tagTypes.ADMIN_DASHBOARD],
     }),
+    getReadingAnalytics: builder.query<ReadingAnalytics, AnalyticsParams>({
+      query: (params) => ({
+        url: "/admin/analytics/reading",
+        method: "GET",
+        params,
+      }),
+      providesTags: [tagTypes.ADMIN_DASHBOARD],
+    }),
+    getRevenueAnalytics: builder.query<RevenueAnalytics, AnalyticsParams>({
+      query: (params) => ({
+        url: "/admin/analytics/revenue",
+        method: "GET",
+        params,
+      }),
+      providesTags: [tagTypes.ADMIN_DASHBOARD],
+    }),
+    getUserAnalytics: builder.query<UserAnalytics, AnalyticsParams>({
+      query: (params) => ({
+        url: "/admin/analytics/users",
+        method: "GET",
+        params,
+      }),
+      providesTags: [tagTypes.ADMIN_DASHBOARD],
+    }),
+    getPlatformAnalytics: builder.query<PlatformAnalytics, AnalyticsParams>({
+      query: (params) => ({
+        url: "/admin/analytics/platform",
+        method: "GET",
+        params,
+      }),
+      providesTags: [tagTypes.ADMIN_DASHBOARD],
+    }),
   }),
 });
 
 export const {
   useGetDashboardStatisticsQuery,
   useGetRecentActivityQuery,
+  useGetReadingAnalyticsQuery,
+  useGetRevenueAnalyticsQuery,
+  useGetUserAnalyticsQuery,
+  useGetPlatformAnalyticsQuery,
 } = adminApi;

@@ -16,7 +16,7 @@ export { ratingApi, useGetRatingsBySeriesIdQuery, useGetRatingSummaryQuery, useA
 export { notificationApi, useGetNotificationsQuery, useGetUnreadCountQuery, useMarkAsReadMutation, useMarkAllAsReadMutation, useDeleteNotificationMutation } from "./notificationApi";
 export { subscriptionApi, useGetPlansQuery, useGetSubscriptionsQuery, useGetSubscriptionHistoryQuery, useCreateSubscriptionMutation, useCancelSubscriptionMutation, useUpgradeSubscriptionMutation, useToggleAutoRenewMutation } from "./subscriptionApi";
 export { paymentApi, useCreateCheckoutSessionMutation, useGetInvoicesQuery, useGetInvoiceByIdQuery } from "./paymentApi";
-export { adminApi, useGetDashboardStatisticsQuery, useGetRecentActivityQuery } from "./adminApi";
+export { adminApi, useGetDashboardStatisticsQuery, useGetRecentActivityQuery, useGetReadingAnalyticsQuery, useGetRevenueAnalyticsQuery, useGetUserAnalyticsQuery, useGetPlatformAnalyticsQuery } from "./adminApi";
 
 // Re-export types with unique names to avoid conflicts
 export type { User as AuthUser, LoginRequest, RegisterRequest } from "./authApi";
