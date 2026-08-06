@@ -13,7 +13,7 @@ import { successResponse, handleApiError, errorResponse } from "@/lib/api/index"
 import { HTTP_STATUS, ERROR_CODES } from "@/lib/api/index";
 import { userService } from "@/services";
 import { ZodError } from "zod";
-import { updateUserAdminSchema } from "@/lib/validations/user.validation";
+import { updateUserAdminSchema, updateUserProfileSchema } from "@/validations";
 
 interface RouteContext {
   params: Promise<{ id: string }>;
@@ -84,7 +84,10 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
         );
       }
 
-      const user = await userService.updateUserProfile(id, body);
+      // Validate input using Zod
+      const validatedData = updateUserProfileSchema.parse(body);
+
+      const user = await userService.updateUserProfile(id, validatedData);
 
       return successResponse(user, "User updated successfully");
     }

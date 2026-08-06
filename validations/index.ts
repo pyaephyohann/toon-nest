@@ -13,6 +13,13 @@ export {
 } from "./auth.schema";
 
 export {
+  updateUserProfileSchema,
+  updateUserAdminSchema,
+  type UpdateUserProfileInput,
+  type UpdateUserAdminInput,
+} from "./user.validation";
+
+export {
   createSeriesSchema,
   updateSeriesSchema,
   type CreateSeriesInput,

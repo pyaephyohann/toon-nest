@@ -8,6 +8,8 @@ import { auth } from "@/auth";
 import { successResponse, handleApiError, errorResponse } from "@/lib/api/index";
 import { HTTP_STATUS, ERROR_CODES } from "@/lib/api/index";
 import { userService } from "@/services";
+import { validateUploadedFile, MAX_FILE_SIZES } from "@/lib/file-upload";
+import { ZodError } from "zod";
 
 interface RouteContext {
   params: Promise<{ id: string }>;
@@ -46,10 +48,28 @@ export async function POST(request: NextRequest, context: RouteContext) {
       );
     }
 
+    // Validate avatar URL format
+    try {
+      new URL(avatar);
+    } catch {
+      return errorResponse(
+        ERROR_CODES.VALIDATION_ERROR,
+        "Invalid avatar URL",
+        HTTP_STATUS.BAD_REQUEST
+      );
+    }
+
     const user = await userService.updateUserProfile(id, { avatar });
 
     return successResponse(user, "Avatar updated successfully");
   } catch (error) {
+    if (error instanceof ZodError) {
+      return errorResponse(
+        ERROR_CODES.VALIDATION_ERROR,
+        error.issues[0].message,
+        HTTP_STATUS.BAD_REQUEST
+      );
+    }
     return handleApiError(error);
   }
 }
