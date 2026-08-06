@@ -93,6 +93,9 @@ model User {
   chapterUnlocks ChapterUnlock[]
   seriesStatuses UserSeriesStatus[]
   notifications  Notification[]
+  reports        Report[] @relation("ReporterReports")
+  moderatedReports Report[] @relation("ModeratorReports")
+  moderationActions ModerationAction[]
 }
 
 model Series {
@@ -494,4 +497,73 @@ model ChapterUnlock {
   @@unique([userId, chapterId])
   @@index([userId])
   @@index([chapterId])
+}
+
+// Moderation Models
+model Report {
+  id          String @id @default(cuid())
+  reporterId  String
+  targetType  ReportTargetType
+  targetId    String
+  reason      String
+  description String? @db.Text
+  status      ReportStatus @default(PENDING)
+  moderatorId String?
+  resolvedAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reporter  User  @relation("ReporterReports", fields: [reporterId], references: [id], onDelete: Cascade)
+  moderator User? @relation("ModeratorReports", fields: [moderatorId], references: [id])
+
+  @@index([reporterId])
+  @@index([targetType, targetId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model ModerationAction {
+  id          String @id @default(cuid())
+  moderatorId String
+  actionType  ModerationActionType
+  targetType  ModerationTargetType
+  targetId    String
+  reason      String?
+  metadata    String? @db.Text
+
+  createdAt DateTime @default(now())
+
+  moderator User @relation(fields: [moderatorId], references: [id])
+
+  @@index([moderatorId])
+  @@index([targetType, targetId])
+  @@index([createdAt])
+}
+
+enum ReportTargetType {
+  COMMENT
+  RATING
+  USER
+}
+
+enum ReportStatus {
+  PENDING
+  RESOLVED
+  DISMISSED
+}
+
+enum ModerationActionType {
+  APPROVE
+  DELETE
+  HIDE
+  WARN
+  SUSPEND
+  BAN
+}
+
+enum ModerationTargetType {
+  COMMENT
+  RATING
+  USER
 }
