@@ -41,6 +41,7 @@ export class UserRepository {
     username: string;
     email: string;
     password: string;
+    displayName?: string;
     avatar?: string;
     role?: UserRole;
   }): Promise<User> {

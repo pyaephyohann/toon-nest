@@ -22,6 +22,7 @@ export class AuthRepository {
     username: string;
     email: string;
     hashedPassword: string;
+    displayName?: string;
     avatar?: string;
     role?: UserRole;
   }): Promise<User> {
@@ -29,6 +30,7 @@ export class AuthRepository {
       username: data.username,
       email: data.email,
       password: data.hashedPassword,
+      displayName: data.displayName,
       avatar: data.avatar,
       role: data.role || UserRole.USER,
     });

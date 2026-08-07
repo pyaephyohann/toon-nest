@@ -52,6 +52,7 @@ export class AuthService {
     id: string;
     email: string;
     username: string;
+    displayName?: string;
     role: UserRole;
   }> {
     // Validate input
@@ -75,6 +76,7 @@ export class AuthService {
     const user = await authRepository.createWithHashedPassword({
       username: validatedData.username,
       email: validatedData.email,
+      displayName: validatedData.displayName,
       hashedPassword,
       role: UserRole.USER,
     });
@@ -84,6 +86,7 @@ export class AuthService {
       id: user.id,
       email: user.email,
       username: user.username,
+      displayName: user.displayName || undefined,
       role: user.role,
     };
   }

@@ -1,12 +1,14 @@
 /**
  * Register Page
  * Premium registration page using the Authentication Design System
+ * Integrated with RTK Query for registration
  */
 
 "use client";
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   AuthLayout,
   AuthCard,
@@ -21,15 +23,19 @@ import {
   FormError,
   FormSuccess,
 } from "@/components/auth";
+import { useRegisterMutation } from "@/store/api/authApi";
+import { registerSchema } from "@/validations";
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const [register, { isLoading }] = useRegisterMutation();
+  
   const [username, setUsername] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [agreeToTerms, setAgreeToTerms] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
@@ -42,36 +48,37 @@ export default function RegisterPage() {
     setSuccess(null);
     setValidationErrors([]);
 
-    // Validation (placeholder)
-    const errors: string[] = [];
-    if (!username) errors.push("Username is required");
-    if (username && username.length < 3) errors.push("Username must be at least 3 characters");
-    if (!displayName) errors.push("Display name is required");
-    if (!email) errors.push("Email is required");
-    if (!password) errors.push("Password is required");
-    if (password && password.length < 8) errors.push("Password must be at least 8 characters");
-    if (!confirmPassword) errors.push("Please confirm your password");
-    if (password !== confirmPassword) errors.push("Passwords do not match");
-    if (!agreeToTerms) errors.push("You must agree to the Terms of Service and Privacy Policy");
-
-    if (errors.length > 0) {
+    // Client-side validation using Zod schema
+    try {
+      registerSchema.parse({ username, displayName, email, password });
+    } catch (validationError: any) {
+      const errors = validationError.errors?.map((err: any) => err.message) || ["Validation failed"];
       setValidationErrors(errors);
       return;
     }
 
-    // Simulate loading (placeholder)
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setSuccess("Account created successfully! Please check your email to verify your account.");
-      // Reset form
-      setUsername("");
-      setDisplayName("");
-      setEmail("");
-      setPassword("");
-      setConfirmPassword("");
-      setAgreeToTerms(false);
-    }, 2000);
+    // Additional client-side validation
+    const errors: string[] = [];
+    if (password !== confirmPassword) errors.push("Passwords do not match");
+    if (!agreeToTerms) errors.push("You must agree to the Terms of Service and Privacy Policy");
+
+    if (errors.length > 0) {
+      setValidationErrors([...validationErrors, ...errors]);
+      return;
+    }
+
+    // Call RTK Query register mutation
+    try {
+      await register({ username, displayName, email, password }).unwrap();
+      setSuccess("Account created successfully! Redirecting to email verification...");
+      
+      // Redirect to Verify Email page after successful registration
+      setTimeout(() => {
+        router.push("/verify-email");
+      }, 2000);
+    } catch (err: any) {
+      setError(err.data?.message || "Registration failed. Please try again.");
+    }
   };
 
   const handleGoogleLogin = () => {
