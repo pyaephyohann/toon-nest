@@ -10,7 +10,6 @@ import Link from "next/link";
 import {
   AuthLayout,
   AuthCard,
-  AuthHeader,
   AuthInput,
   PasswordInput,
   Divider,
@@ -126,7 +125,7 @@ export default function LoginPage() {
             />
             <Link
               href="/forgot-password"
-              className="text-sm text-orange-400 hover:text-orange-300 transition-colors"
+              className="text-sm text-orange-400 hover:text-orange-300 font-medium transition-colors"
             >
               Forgot password?
             </Link>

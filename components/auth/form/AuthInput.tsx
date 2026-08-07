@@ -22,6 +22,7 @@ export const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
             className="block text-sm font-medium text-gray-300 mb-2"
           >
             {label}
+            {props.required && <span className="text-orange-400 ml-1" aria-label="required">*</span>}
           </label>
         )}
         
@@ -43,12 +44,14 @@ export const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
               ${error ? 'border-red-500 focus:ring-red-500/50 focus:border-red-500' : ''}
               ${className}
             `}
+            aria-invalid={!!error}
+            aria-describedby={error ? `${props.id}-error` : undefined}
             {...props}
           />
         </div>
         
         {error && (
-          <p className="mt-1 text-sm text-red-400">
+          <p id={`${props.id}-error`} className="mt-1 text-sm text-red-400" role="alert">
             {error}
           </p>
         )}

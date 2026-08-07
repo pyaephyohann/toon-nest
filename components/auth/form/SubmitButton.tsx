@@ -37,6 +37,7 @@ export const SubmitButton = forwardRef<HTMLButtonElement, SubmitButtonProps>(
         type="submit"
         disabled={isLoading || disabled}
         className={`${baseStyles} ${variantStyles[variant]} ${(isLoading || disabled) ? disabledStyles : ""} ${className}`}
+        aria-busy={isLoading}
         {...props}
       >
         {isLoading ? (

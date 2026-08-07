@@ -1,12 +1,12 @@
 /**
  * StatusPage Component
  * Reusable status page component for success, error, warning, and info states
- * Supports Framer Motion animations and optional background
+ * Supports Framer Motion animations and optional background with reduced motion support
  */
 
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { BackgroundGlow, FloatingShapes } from "@/components/auth";
 
@@ -96,6 +96,7 @@ export function StatusPage({
   showBackground = false,
   className = "",
 }: StatusPageProps) {
+  const prefersReducedMotion = useReducedMotion();
   const colors = ColorSchemes[type];
   const defaultIcon = DefaultIcons[type];
 
@@ -141,12 +142,12 @@ export function StatusPage({
       >
         <motion.div
           className="bg-gray-900/80 backdrop-blur-xl border border-gray-800 rounded-2xl p-8 shadow-2xl"
-          variants={itemVariants}
+          variants={prefersReducedMotion ? {} : itemVariants}
         >
           {/* Icon */}
           <motion.div
             className={`w-24 h-24 mx-auto ${colors.bg} rounded-full flex items-center justify-center mb-6`}
-            variants={itemVariants}
+            variants={prefersReducedMotion ? {} : itemVariants}
           >
             <div className={colors.icon}>
               {icon || defaultIcon}
@@ -156,7 +157,7 @@ export function StatusPage({
           {/* Title */}
           <motion.h1
             className="text-3xl font-bold text-white text-center mb-4"
-            variants={itemVariants}
+            variants={prefersReducedMotion ? {} : itemVariants}
           >
             {title}
           </motion.h1>
@@ -165,7 +166,7 @@ export function StatusPage({
           {description && (
             <motion.p
               className="text-gray-400 text-center mb-8"
-              variants={itemVariants}
+              variants={prefersReducedMotion ? {} : itemVariants}
             >
               {description}
             </motion.p>
@@ -174,7 +175,7 @@ export function StatusPage({
           {/* Actions */}
           <motion.div
             className="flex flex-col sm:flex-row gap-3 justify-center"
-            variants={itemVariants}
+            variants={prefersReducedMotion ? {} : itemVariants}
           >
             {primaryAction && renderButton(primaryAction, true)}
             {secondaryAction && renderButton(secondaryAction, false)}

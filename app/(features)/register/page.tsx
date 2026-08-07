@@ -119,7 +119,7 @@ export default function RegisterPage() {
           />
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {/* Username Field */}
           <AuthInput
             id="username"
