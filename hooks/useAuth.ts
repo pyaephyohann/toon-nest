@@ -23,12 +23,13 @@ interface AuthState {
 export function useAuth() {
   const { data: session, status } = useSession();
 
-  const login = async (email: string, password: string) => {
-    await signIn("credentials", {
+  const login = async (email: string, password: string, rememberMe: boolean = false) => {
+    const result = await signIn("credentials", {
       email,
       password,
       redirect: false,
     });
+    return result;
   };
 
   const logout = async () => {

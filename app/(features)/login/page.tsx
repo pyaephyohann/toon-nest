@@ -1,12 +1,14 @@
 /**
  * Login Page
  * Premium login page using the Authentication Design System
+ * Integrated with Auth.js for authentication
  */
 
 "use client";
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   AuthLayout,
   AuthCard,
@@ -19,8 +21,13 @@ import {
   AuthAlert,
   FormError,
 } from "@/components/auth";
+import { useAuth } from "@/hooks/useAuth";
+import { loginSchema } from "@/validations";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const { login, isLoading: authLoading } = useAuth();
+  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -35,23 +42,32 @@ export default function LoginPage() {
     setError(null);
     setValidationErrors([]);
 
-    // Validation (placeholder)
-    const errors: string[] = [];
-    if (!email) errors.push("Email is required");
-    if (!password) errors.push("Password is required");
-    if (password && password.length < 8) errors.push("Password must be at least 8 characters");
-
-    if (errors.length > 0) {
+    // Client-side validation using Zod schema
+    try {
+      loginSchema.parse({ email, password });
+    } catch (validationError: any) {
+      const errors = validationError.errors?.map((err: any) => err.message) || ["Validation failed"];
       setValidationErrors(errors);
       return;
     }
 
-    // Simulate loading (placeholder)
+    // Call Auth.js login
     setIsLoading(true);
-    setTimeout(() => {
+    try {
+      const result = await login(email, password, rememberMe);
+      
+      if (result?.error) {
+        setError("Invalid email or password");
+      } else {
+        // Successful login - redirect to home or intended page
+        router.push("/");
+        router.refresh();
+      }
+    } catch (err) {
+      setError("An error occurred during login. Please try again.");
+    } finally {
       setIsLoading(false);
-      setError("Invalid email or password"); // Placeholder error
-    }, 2000);
+    }
   };
 
   const handleGoogleLogin = () => {
