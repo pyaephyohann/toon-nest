@@ -3,6 +3,8 @@
  * Password input with show/hide toggle
  */
 
+"use client";
+
 import { useState } from "react";
 import { AuthInput, AuthInputProps } from "./AuthInput";
 

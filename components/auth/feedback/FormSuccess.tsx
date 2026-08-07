@@ -3,6 +3,8 @@
  * Success message display with auto-dismiss
  */
 
+"use client";
+
 import { useEffect, useState } from "react";
 
 interface FormSuccessProps {
